@@ -1,20 +1,41 @@
-from random import randint
+import math
 
-import pygame
-pygame.init()
-clock = pygame.time.Clock()
+import pygame as pg
+pg.init()
+clock = pg.time.Clock()
 
-pygame.display.set_caption("Multigame")
-screen = pygame.display.set_mode((1080, 650))
-r = v = b = 0
+pg.display.set_caption("Multigame")
+screen = pg.display.set_mode((pg.display.get_desktop_sizes()[0][0]-100,pg.display.get_desktop_sizes()[0][1]-100),pg.SCALED)
+pg.display.toggle_fullscreen()
 
-while(not (pygame.event.peek(pygame.QUIT))):
-    screen.fill(pygame.Color(r, v, b))
-    r = round(randint(0,255))
-    v = round(randint(0,255))
-    b = round(randint(0,255))
+i = 0
+running = 1
+
+while(running):
+    r = round(255*math.cos((i+45)*3.14/180))
+    v = round(255*math.cos((i+115)*3.14/180/3))
+    b = round(255*math.cos(i*3.14/180/5))
+    if(r<0):
+        r = -r
+    if(v<0):
+        v = -v
+    if(b<0):
+        b = -b
+        
+    screen.fill(pg.Color(r, v, b))
     
-    pygame.display.flip()
-    clock.tick(5)
+    i += 1
     
-pygame.quit()
+    for event in pg.event.get():
+        if (event.type == pg.QUIT):
+            running = False
+        if (event.type == pg.KEYDOWN):
+            if (event.key == pg.K_ESCAPE):
+                running = False
+            if (event.key == pg.K_f):
+                pg.display.toggle_fullscreen()
+    
+    pg.display.flip()
+    clock.tick(60)
+    
+pg.quit()
