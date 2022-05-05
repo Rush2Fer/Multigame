@@ -1,41 +1,29 @@
-import math
+from pacman import Pacman
 
-import pygame as pg
-pg.init()
-clock = pg.time.Clock()
+import pygame
+pygame.init()
+clock = pygame.time.Clock()
 
-pg.display.set_caption("Multigame")
-screen = pg.display.set_mode((pg.display.get_desktop_sizes()[0][0]-100,pg.display.get_desktop_sizes()[0][1]-100),pg.SCALED)
-pg.display.toggle_fullscreen()
+pygame.display.set_caption("Multigame")
+screen = pygame.display.set_mode((pygame.display.get_desktop_sizes()[0][0]-100,pygame.display.get_desktop_sizes()[0][1]-100),pygame.RESIZABLE)
 
 i = 0
 running = 1
+pac = Pacman(screen)
 
 while(running):
-    r = round(255*math.cos((i+45)*3.14/180))
-    v = round(255*math.cos((i+115)*3.14/180/3))
-    b = round(255*math.cos(i*3.14/180/5))
-    if(r<0):
-        r = -r
-    if(v<0):
-        v = -v
-    if(b<0):
-        b = -b
+    pac.affiche_pacman(screen)
         
-    screen.fill(pg.Color(r, v, b))
-    
-    i += 1
-    
-    for event in pg.event.get():
-        if (event.type == pg.QUIT):
+    for event in pygame.event.get():
+        if (event.type == pygame.QUIT):
             running = False
-        if (event.type == pg.KEYDOWN):
-            if (event.key == pg.K_ESCAPE):
+        if (event.type == pygame.KEYDOWN):
+            if (event.key == pygame.K_ESCAPE):
                 running = False
-            if (event.key == pg.K_f):
-                pg.display.toggle_fullscreen()
+            if (event.key == pygame.K_f):
+                pygame.display.toggle_fullscreen()
     
-    pg.display.flip()
+    pygame.display.flip()
     clock.tick(60)
     
-pg.quit()
+pygame.quit()
