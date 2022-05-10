@@ -33,18 +33,15 @@ while(running):
         for e in portes:
             e.update(0)
         doors_state = 1
-        print("state update")
 
     elif (doors_state == 1) and time >= 4500:
         doors_state = 2
         for e in portes:
             e.update(9)
-        print("state update")
     elif (doors_state==2) and time >= 5000:
         doors_state = 3
         for e in portes:
             e.update(0)
-        print("state update")
 
     clock.tick(60)
     pygame.display.flip()

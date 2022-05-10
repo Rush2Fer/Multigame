@@ -1,10 +1,15 @@
 import pygame
 
-images_map=[pygame.image.load("images/vide.png"), pygame.image.load("images/bonus.png"), pygame.image.load(
-    "images/pastille.png"), pygame.image.load("images/mur_vertical.png"), pygame.image.load("images/mur_horizontal.png"), pygame.image.load(
-    "images/coin_haut_droit.png"), pygame.image.load("images/coin_haut_gauche.png"), pygame.image.load(
-    "images/coin_bas_gauche.png"), pygame.image.load("images/coin_bas_droit.png"), pygame.image.load(
-    "images/porte.png")]
+images_map=[pygame.image.load("../../OneDrive/Documents/GitHub/Multigame/images/vide.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/bonus.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/pastille.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/mur_vertical.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/mur_horizontal.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/coin_haut_droit.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/coin_haut_gauche.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/coin_bas_gauche.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/coin_bas_droit.png"), pygame.image.load(
+    "../../OneDrive/Documents/GitHub/Multigame/images/porte.png")]
 vide = 0
 bonus = 1
 pastille = 2
