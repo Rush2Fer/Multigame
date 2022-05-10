@@ -1,6 +1,10 @@
 import pygame
 
-images_map=[pygame.image.load("images/vide.png"),pygame.image.load("images/bonus.png"),pygame.image.load("images/pastille.png"),pygame.image.load("images/mur_vertical.png"),pygame.image.load("images/mur_horizontal.png"),pygame.image.load("images/coin_haut_droit.png"),pygame.image.load("images/coin_haut_gauche.png"),pygame.image.load("images/coin_bas_gauche.png"),pygame.image.load("images/coin_bas_droit.png"),pygame.image.load("images/porte.png")]
+images_map=[pygame.image.load("images/vide.png"), pygame.image.load("images/bonus.png"), pygame.image.load(
+    "images/pastille.png"), pygame.image.load("images/mur_vertical.png"), pygame.image.load("images/mur_horizontal.png"), pygame.image.load(
+    "images/coin_haut_droit.png"), pygame.image.load("images/coin_haut_gauche.png"), pygame.image.load(
+    "images/coin_bas_gauche.png"), pygame.image.load("images/coin_bas_droit.png"), pygame.image.load(
+    "images/porte.png")]
 vide = 0
 bonus = 1
 pastille = 2
@@ -54,6 +58,13 @@ class Pacman:
         for i in range(31):
             for j in range(28):
                 self.map.add(Case(j,i,))
+
+    def portes(self):
+        doors = list()
+        for e in self.map.sprites():
+            if (e.rect.x, e.rect.y) == (13, 12) or (e.rect.x, e.rect.y) == (14, 12):
+                doors.append(e)
+        return doors
         
     def affiche_pacman(self,screen):
         w = screen.get_width()
@@ -62,7 +73,7 @@ class Pacman:
         offset_x = int(w/2)-int(h/2)+int(1.5*taille)
         for sprite in self.map:
             screen.blit(sprite.image,(offset_x+sprite.rect.x*taille,sprite.rect.y*taille))
-    
+
     def __repr__(self):
         res = ""
         i=0
@@ -81,6 +92,9 @@ class Case(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
     def __repr__(self):
         return "({},{}):{}".format(self.rect.x,self.rect.y,self.contenu)
+
+    def update(self, value):
+        self.contenu = value
+        self.image = images_map[self.contenu]
