@@ -1,8 +1,12 @@
 import pygame
+from jeu import Jeu
 
 clock = pygame.time.Clock()
 
 images_map=[None,pygame.image.load("images/bonus.png"),pygame.image.load("images/pastille.png"),pygame.image.load("images/mur_vertical.png"),pygame.image.load("images/mur_horizontal.png"),pygame.image.load("images/coin_haut_droit.png"),pygame.image.load("images/coin_haut_gauche.png"),pygame.image.load("images/coin_bas_gauche.png"),pygame.image.load("images/coin_bas_droit.png"),pygame.image.load("images/porte.png")]
+images_pacman=[[pygame.image.load("images/pacman_0.png"),pygame.image.load("images/pacman_1.png"),pygame.image.load("images/pacman_2.png"),pygame.image.load("images/pacman_3.png")],
+               [pygame.image.load("images/pacman_4.png"),pygame.image.load("images/pacman_5.png"),pygame.image.load("images/pacman_6.png"),pygame.image.load("images/pacman_7.png")]
+               ]
 vide = bas = 0
 bonus = droite = 1
 pastille = haut = 2
@@ -48,33 +52,25 @@ contenu_map = [[6,4,4,4,4,4,4,4,4,4,4,4,4,5,6,4,4,4,4,4,4,4,4,4,4,4,4,5],
 image_offset_x = [0,4,8,8,0,0,8,8,0,0]
 image_offset_y = [0,4,8,0,8,8,8,0,0,8]
 
-class Pacman:
+class PacmanJeu(Jeu):
     def __init__(self):
-        pygame.display.set_caption("Multigame")
-        self.screen = pygame.display.set_mode((pygame.display.get_desktop_sizes()[0][0]-100,pygame.display.get_desktop_sizes()[0][1]-100),pygame.RESIZABLE)
-        self.screen_size = self.screen.get_size()
-        self.running = 1
+        super().__init__()
         self.doors_state = 0
         self.map = pygame.sprite.Group()
+        self.murs = pygame.sprite.Group()
         self.init_map()
         self.portes = self.portes()
-        self.pac = pygame.sprite.Sprite()
-        self.init_pac()
-        self.events = []
+        self.pac = Pacman(self)
         
         
     def init_map(self):
         for i in range(31):
             for j in range(28):
                 if(contenu_map[i][j]!=0):
-                    self.map.add(Case(j,i,self))
-
-    def init_pac(self):
-        self.pac.image = pygame.image.load("images/pacman.png")
-        self.pac.rect = self.pac.image.get_rect()
-        self.pac.rect.x = int(self.screen.get_width()/2) - int(self.pac.rect.w/2)
-        self.pac.rect.y = int(3*self.screen.get_height()/4) - 12
-        self.pac.direction = bas
+                    case = Case(j,i,self)
+                    self.map.add(case)
+                    if(not (contenu_map[i][j]==1 or contenu_map[i][j]==2)):
+                        self.murs.add(case)
 
     def portes(self):
         doors = list()
@@ -92,13 +88,13 @@ class Pacman:
                 if (event.key == pygame.K_ESCAPE):
                     self.running = False
                 if (event.key == pygame.K_DOWN):
-                    self.pac.direction = haut
+                    self.pac.direction_voulue = haut
                 if (event.key == pygame.K_UP):
-                    self.pac.direction = bas
+                    self.pac.direction_voulue = bas
                 if (event.key == pygame.K_RIGHT):
-                    self.pac.direction = droite
+                    self.pac.direction_voulue = droite
                 if (event.key == pygame.K_LEFT):
-                    self.pac.direction = gauche
+                    self.pac.direction_voulue = gauche
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 continue
             # if event.type == pygame.VIDEORESIZE:
@@ -114,27 +110,12 @@ class Pacman:
             #     self.screen_size=self.screen.get_size()
         self.events = []
     
-    def affiche_pacman(self):
+    def affiche_jeu(self):
         self.screen.fill(pygame.Color(0,0,0))
         for sprite in self.map:
             if(sprite.visible==1):
                 self.screen.blit(sprite.image,sprite.rect)
-        self.screen.blit(self.pac.image,self.pac.rect)
-        
-    def avance_pacman(self):
-        previous_rect_x = self.pac.rect.x
-        previous_rect_y = self.pac.rect.y
-        if (self.pac.direction == bas):
-            self.pac.rect.y -= 1
-        elif (self.pac.direction == droite):
-            self.pac.rect.x += 1
-        elif (self.pac.direction == haut):
-            self.pac.rect.y += 1
-        elif (self.pac.direction == gauche):
-            self.pac.rect.x -= 1
-        if (pygame.sprite.spritecollideany(self.pac,self.map)!=None):
-            self.pac.rect.x = previous_rect_x
-            self.pac.rect.y = previous_rect_y
+        self.screen.blit(images_pacman[self.pac.animation][self.pac.direction],self.pac.rect)
     
     def animation_ouverture_porte(self):
         time = pygame.time.get_ticks()
@@ -159,7 +140,79 @@ class Pacman:
             res += str(sprite) + ";"
             i+=1
         return res+str(i)
+
+
+class Pacman(pygame.sprite.Sprite):
+    def __init__(self,jeu):
+        super().__init__()
+        self.jeu = jeu
+        self.direction = bas
+        self.direction_voulue = bas
+        self.animation = 0
+        self.image = images_pacman[self.animation][self.direction]
+        self.rect = self.image.get_rect()
+        self.rect.x = int(self.jeu.screen.get_width()/2) - int(self.rect.w/2)
+        self.rect.y = int(3*self.jeu.screen.get_height()/4) - 12
+        self.time_last_animation = 0
+        
+    def avance(self):
+        if (not self.collide_prochain(self.direction_voulue)):
+            self.direction = self.direction_voulue
+            if (self.direction == bas):
+                self.rect.y -= 1
+            elif (self.direction == droite):
+                self.rect.x += 1
+            elif (self.direction == haut):
+                self.rect.y += 1
+            elif (self.direction == gauche):
+                self.rect.x -= 1
+        else:
+            if (not self.collide_prochain(self.direction)):
+                if (self.direction == bas):
+                    self.rect.y -= 1
+                elif (self.direction == droite):
+                    self.rect.x += 1
+                elif (self.direction == haut):
+                    self.rect.y += 1
+                elif (self.direction == gauche):
+                    self.rect.x -= 1
+        pygame.sprite.spritecollide(self, self.jeu.map, True)
     
+    def collide_prochain(self,direction):
+        rect_x = self.rect.x
+        rect_y = self.rect.y
+        if (direction == bas):
+            rect_y -= 1
+        elif (direction == droite):
+            rect_x += 1
+        elif (direction == haut):
+            rect_y += 1
+        elif (direction == gauche):
+            rect_x -= 1
+        testeur_sprite = pygame.sprite.Sprite()
+        testeur_sprite.rect = pygame.Rect(rect_x, rect_y, self.rect.w, self.rect.h)
+        return pygame.sprite.spritecollideany(testeur_sprite, self.jeu.murs)
+            
+    def update_animation(self):
+        time = pygame.time.get_ticks()
+        if (time-self.time_last_animation>500):
+            self.time_last_animation=time
+            self.animation = 1 - self.animation
+        
+
+class Fantome(pygame.sprite.Sprite):
+    def __init__(self,jeu):
+        super().__init__()
+        self.jeu = jeu
+        self.direction = bas
+        # self.image = images_fantome[self.pac.direction]
+        # self.rect = self.pac.image.get_rect()
+        # self.rect.x = 
+        # self.rect.y = 
+        self.animation = 0
+        
+    def avance(self):#IA pour bouger fantomes vers pacman
+        pass # TO DO
 
 class Case(pygame.sprite.Sprite):
     
