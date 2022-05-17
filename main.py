@@ -14,6 +14,7 @@ while(jeu.running):
     
     jeu.pac.avance()
     jeu.pac.update_animation()
+    jeu.update_images()
 
     # Animation ouverture porte sans mettre en pause le programme (déplacement possible)
     jeu.animation_ouverture_porte()
