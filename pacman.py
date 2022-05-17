@@ -154,8 +154,11 @@ class Pacman(pygame.sprite.Sprite):
         self.image = images_pacman[self.animation][self.direction]
         self.mask = pygame.mask.from_threshold(self.image,(255,201,14,255),(246,192,5,255))
         self.rect = self.image.get_rect()
+        h = self.jeu.screen.get_height()
+        taille = int(1.5*h/31)
         self.rect.x = int(self.jeu.screen.get_width() / 2) - int(self.rect.w / 2)
-        self.rect.y = int(3 * self.jeu.screen.get_height() / 4)  - 13
+        self.rect.y = int(3 * self.jeu.screen.get_height() / 4)  - taille/2 + 1
+        self.image = pygame.transform.scale(self.image, (taille,taille))
         self.time_last_animation = 0
         
     def avance(self):
@@ -245,8 +248,7 @@ class Case(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x*taille+offset_x
         self.rect.y = y*taille
-        scale_h2w = self.rect.h/self.rect.w
-        self.image = pygame.transform.scale(self.image, (taille*scale_h2w,taille))
+        self.image = pygame.transform.scale(self.image, (taille,taille))
 
     def __repr__(self):
         return "({},{}):{}".format(self.rect.x,self.rect.y,self.contenu)
