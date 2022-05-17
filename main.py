@@ -1,10 +1,10 @@
 from pacman import PacmanJeu
+from pacman import Pacman
 
 import pygame
 pygame.init()
 clock = pygame.time.Clock()
 
-i = 0
 jeu = PacmanJeu()
 
 while(jeu.running):
@@ -14,12 +14,11 @@ while(jeu.running):
     
     jeu.pac.avance()
     jeu.pac.update_animation()
-    jeu.update_images()
 
     # Animation ouverture porte sans mettre en pause le programme (déplacement possible)
     jeu.animation_ouverture_porte()
 
-    clock.tick(120)
+    clock.tick(60)
     pygame.display.flip()
     
 pygame.quit()
