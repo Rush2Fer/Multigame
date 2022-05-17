@@ -157,7 +157,7 @@ class Pacman(pygame.sprite.Sprite):
         h = self.jeu.screen.get_height()
         taille = int(1.5*h/31)
         self.rect.x = int(self.jeu.screen.get_width() / 2) - int(self.rect.w / 2)
-        self.rect.y = int(3 * self.jeu.screen.get_height() / 4)  - taille/2 + 1
+        self.rect.y = int(3 * self.jeu.screen.get_height() / 4)  - taille/2 + 2
         self.image = pygame.transform.scale(self.image, (taille,taille))
         self.time_last_animation = 0
         
@@ -236,11 +236,6 @@ class Case(pygame.sprite.Sprite):
         self.contenu = contenu_map[y][x]
         self.visible = 1
         self.image = images_map[self.contenu]
-        self.mask = pygame.mask.from_threshold(self.image,(63,72,204,255),(62,71,203,255))
-        # mask2 = pygame.mask.from_threshold(self.image,(255,201,14,255),(254,200,13,255))
-        # mask3 = pygame.mask.from_threshold(self.image,(255,174,201,255),(254,173,200,255))
-        # self.mask.overlap_mask(mask2, (0,0))
-        # self.mask.overlap_mask(mask3, (0,0))
         w = pac.screen.get_width()
         h = pac.screen.get_height()
         taille = int((h)/31)
@@ -249,6 +244,12 @@ class Case(pygame.sprite.Sprite):
         self.rect.x = x*taille+offset_x
         self.rect.y = y*taille
         self.image = pygame.transform.scale(self.image, (taille,taille))
+        if(self.contenu==1 or self.contenu==2):
+            self.mask = pygame.mask.from_threshold(self.image,(255,201,14,255),(254,200,13,255))
+        if(self.contenu==9):
+            self.mask = pygame.mask.from_threshold(self.image,(255,174,201,255),(254,173,200,255))
+        else:
+            self.mask = pygame.mask.from_threshold(self.image,(63,72,204,255),(62,71,203,255))
 
     def __repr__(self):
         return "({},{}):{}".format(self.rect.x,self.rect.y,self.contenu)
