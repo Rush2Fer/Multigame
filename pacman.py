@@ -4,12 +4,16 @@ from jeu import Jeu
 clock = pygame.time.Clock()
 
 images_map=[None,pygame.image.load("images/bonus.png"),pygame.image.load("images/pastille.png"),pygame.image.load("images/mur_vertical.png"),pygame.image.load("images/mur_horizontal.png"),pygame.image.load("images/coin_haut_droit.png"),pygame.image.load("images/coin_haut_gauche.png"),pygame.image.load("images/coin_bas_gauche.png"),pygame.image.load("images/coin_bas_droit.png"),pygame.image.load("images/porte.png")]
+masks_map=[None,pygame.image.load("images/mask_bonus.png"),pygame.image.load("images/mask_pastille.png"),pygame.image.load("images/mask_mur_vertical.png"),pygame.image.load("images/mask_mur_horizontal.png"),pygame.image.load("images/mask_coin_haut_droit.png"),pygame.image.load("images/mask_coin_haut_gauche.png"),pygame.image.load("images/mask_coin_bas_gauche.png"),pygame.image.load("images/mask_coin_bas_droit.png"),pygame.image.load("images/mask_porte.png")]
 images_pacman=[[pygame.image.load("images/pacman_0.png"),pygame.image.load("images/pacman_1.png"),pygame.image.load("images/pacman_2.png"),pygame.image.load("images/pacman_3.png")],
                [pygame.image.load("images/pacman_4.png"),pygame.image.load("images/pacman_5.png"),pygame.image.load("images/pacman_6.png"),pygame.image.load("images/pacman_7.png")]
                ]
+mask_pacman=pygame.image.load("images/mask_pacman.png")
 images_fantome=[[pygame.image.load("images/fantome_0.png"),pygame.image.load("images/fantome_1.png"),pygame.image.load("images/fantome_2.png"),pygame.image.load("images/fantome_3.png")],
                [pygame.image.load("images/fantome_4.png"),pygame.image.load("images/fantome_5.png"),pygame.image.load("images/fantome_6.png"),pygame.image.load("images/fantome_7.png")]
                ]
+mask_fantome=pygame.image.load("images/mask_fantome.png")
+
 vide = bas = 0
 bonus = droite = 1
 pastille = haut = 2
@@ -141,7 +145,7 @@ class PacmanJeu(Jeu):
                 e.update(0)
 
     def __repr__(self):
-        return "Objet PamanJeu"
+        return "Objet PacmanJeu"
 
 
 class Pacman(pygame.sprite.Sprite):
@@ -152,13 +156,13 @@ class Pacman(pygame.sprite.Sprite):
         self.direction_voulue = bas
         self.animation = 0
         self.image = images_pacman[self.animation][self.direction]
-        self.mask = pygame.mask.from_threshold(self.image,(255,201,14,255),(246,192,5,255))
         self.rect = self.image.get_rect()
         h = self.jeu.screen.get_height()
         taille = int(1.5*h/31)
         self.rect.x = int(self.jeu.screen.get_width() / 2) - int(self.rect.w / 2)
         self.rect.y = int(3 * self.jeu.screen.get_height() / 4)  - taille/2 + 2
         self.image = pygame.transform.scale(self.image, (taille,taille))
+        self.mask = pygame.mask.from_surface(mask_pacman)
         self.time_last_animation = 0
         
     def avance(self):
@@ -185,10 +189,10 @@ class Pacman(pygame.sprite.Sprite):
         pygame.sprite.spritecollide(self, self.jeu.pastilles,True,pygame.sprite.collide_mask)
         
     def collide_droit(self):
-        return self.collide_distance(self.direction,1)
+        return self.collide_distance(self.direction,2)
     
     def collide_tourne(self,direction):
-        return self.collide_distance(direction,3)
+        return self.collide_distance(direction,22)
     
     def collide_distance(self,direction,distance):
         rect_x = self.rect.x
@@ -220,6 +224,7 @@ class Fantome(pygame.sprite.Sprite):
         self.jeu = jeu
         self.direction = bas
         self.image = images_fantome[self.direction]
+        self.mask = pygame.mask.from_surface(mask_fantome)
         self.rect = self.pac.image.get_rect()
         self.rect.x = 1
         self.rect.y = 1
@@ -244,12 +249,7 @@ class Case(pygame.sprite.Sprite):
         self.rect.x = x*taille+offset_x
         self.rect.y = y*taille
         self.image = pygame.transform.scale(self.image, (taille,taille))
-        if(self.contenu==1 or self.contenu==2):
-            self.mask = pygame.mask.from_threshold(self.image,(255,201,14,255),(254,200,13,255))
-        if(self.contenu==9):
-            self.mask = pygame.mask.from_threshold(self.image,(255,174,201,255),(254,173,200,255))
-        else:
-            self.mask = pygame.mask.from_threshold(self.image,(63,72,204,255),(62,71,203,255))
+        self.mask = pygame.mask.from_surface(masks_map[self.contenu])
 
     def __repr__(self):
         return "({},{}):{}".format(self.rect.x,self.rect.y,self.contenu)
