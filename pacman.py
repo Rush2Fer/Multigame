@@ -73,6 +73,9 @@ class PacmanJeu(Jeu):
         self.init_map()
         self.portes = self.portes()
         self.pac = Pacman(self)
+        self.fantomes = pygame.sprite.Group()
+        self.init_fantomes()
+        self.time_last_animation = 0
         
         
     def init_map(self):
@@ -84,6 +87,10 @@ class PacmanJeu(Jeu):
                         self.murs.add(case)
                     else:
                         self.pastilles.add(case)
+    
+    def init_fantomes(self):
+        for i in range(1):
+            self.fantomes.add(Fantome(self,i))
     
     def scale_images(self):
         h = self.screen.get_height()
@@ -139,6 +146,8 @@ class PacmanJeu(Jeu):
             if(sprite.visible==1):
                 self.screen.blit(sprite.image,sprite.rect)
         self.screen.blit(self.pac.image,self.pac.rect)
+        for sprite in self.fantomes.sprites():
+            self.screen.blit(sprite.image,sprite.rect)
     
     def animation_ouverture_porte(self):
         time = pygame.time.get_ticks()
@@ -173,14 +182,6 @@ class PacmanJeu(Jeu):
         ancienne_taille_pac = int(1.8*previous_size[1]/31)
         ancien_offset_x = int(previous_size[0]/2)-int(12.5*ancienne_taille_case)
         
-        # print(w)
-        # print(h)
-        # print(taille_case)
-        # print(taille_pac)
-        # print(offset_x)
-        # print(anienne_taille_case)
-        # print(ancienne_taille_pacman)
-        # print(ancien_offset_x)
         #pacman
         x, y = (self.pac.rect.x-ancien_offset_x+ancienne_taille_pac/2)/ancienne_taille_case, ((self.pac.rect.y/ancienne_taille_case)*3+1)/3
         self.pac.rect = self.pac.image.get_rect()
@@ -198,6 +199,19 @@ class PacmanJeu(Jeu):
             sprite.rect = sprite.image.get_rect()
             sprite.rect.x = x*taille_case+offset_x
             sprite.rect.y = y*taille_case
+            
+    def update_animations(self):
+        time = pygame.time.get_ticks()
+        if (time-self.time_last_animation>500):
+            self.time_last_animation=time
+            self.pac.animation = 1 - self.pac.animation
+            for sprite in self.fantomes.sprites():
+                sprite.animation = 1 - sprite.animation
+            
+    def avance(self):
+        self.pac.avance()
+        for sprite in self.fantomes.sprites():
+            sprite.avance()
 
     def __repr__(self):
         return "Objet PacmanJeu"
@@ -220,7 +234,6 @@ class Pacman(pygame.sprite.Sprite):
         offset_x = int(w/2)-int(h/2)+int(1.5*taille_case)
         self.rect.x = offset_x+taille_case*14-taille_pac/2
         self.rect.y = taille_case*((23*3-1)/3)
-        self.time_last_animation = 0
         
     def avance(self):
         if (self.direction != self.direction_voulue and not self.collide_tourne(self.direction_voulue)):
@@ -250,7 +263,7 @@ class Pacman(pygame.sprite.Sprite):
         return self.collide_distance(self.direction,self.epaisseur_bord_mask()+2)
     
     def collide_tourne(self,direction):
-        return self.collide_distance(direction,18)
+        return self.collide_distance(direction,self.rect.w/2)
     
     def collide_distance(self,direction,distance):
         rect_x = self.rect.x
@@ -283,31 +296,82 @@ class Pacman(pygame.sprite.Sprite):
         while not self.mask.get_at((i,self.mask.get_size()[1]/2)):
             i += 1
         return i
-            
-    def update_animation(self):
-        time = pygame.time.get_ticks()
-        if (time-self.time_last_animation>500):
-            self.time_last_animation=time
-            self.animation = 1 - self.animation
         
 
 class Fantome(pygame.sprite.Sprite):
-    def __init__(self,jeu):
+    def __init__(self,jeu,num):
         super().__init__()
         self.jeu = jeu
+        self.numero = num
         self.direction = bas
-        w ,h = self.jeu.screen_size
-        taille = int((h)/31)
-        self.image = images_fantome[self.direction]
-        self.image = pygame.transform.scale(self.image, (taille,taille))
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.pac.image.get_rect()
-        self.rect.x = 1
-        self.rect.y = 1
         self.animation = 0
+        w ,h = self.jeu.screen_size
+        taille_case = int(h/31)
+        taille_fant = int(1.8*h/31)
+        self.image = images_fantome[self.animation][self.direction]
+        self.image = pygame.transform.scale(self.image, (taille_fant,taille_fant))
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+        offset_x = int(w/2)-int(h/2)+int(1.5*taille_case)
+        self.rect.x = offset_x+taille_case*14-taille_fant/2
+        self.rect.y = taille_case*((11*3-1)/3)
         
     def avance(self):#IA pour bouger fantomes vers pacman
-        pass # TO DO
+        if (not self.collide_droit()):
+            if (self.direction == bas):
+                self.rect.y -= 1
+            elif (self.direction == droite):
+                self.rect.x += 1
+            elif (self.direction == haut):
+                self.rect.y += 1
+            elif (self.direction == gauche):
+                self.rect.x -= 1
+        else:
+            self.direction = self.prochaine_direction()
+        self.image = images_fantome[self.animation][self.direction]
+    
+    def collide_droit(self):
+        return self.collide_distance(self.direction,self.epaisseur_bord_mask()+2)
+    
+    def collide_tourne(self,direction):
+        return self.collide_distance(direction,self.rect.w/2)
+    
+    def collide_distance(self,direction,distance):
+        rect_x = self.rect.x
+        rect_y = self.rect.y
+        if (direction == bas):
+            rect_y -= distance
+        elif (direction == droite):
+            rect_x += distance
+        elif (direction == haut):
+            rect_y += distance
+        elif (direction == gauche):
+            rect_x -= distance
+        bord = self.epaisseur_bord_mask()
+        if (self.direction == bas):
+            rect_y += bord
+        elif (self.direction == droite):
+            rect_x -= bord
+        elif (self.direction == haut):
+            rect_y -= bord
+        elif (self.direction == gauche):
+            rect_x += bord
+        testeur_sprite = pygame.sprite.Sprite()
+        testeur_sprite.image = self.image
+        testeur_sprite.mask = self.mask
+        testeur_sprite.rect = pygame.Rect(rect_x, rect_y, self.rect.w, self.rect.h)
+        return pygame.sprite.spritecollideany(testeur_sprite, self.jeu.murs,pygame.sprite.collide_mask)
+    
+    def epaisseur_bord_mask(self):
+        i = 0
+        while not self.mask.get_at((i,self.mask.get_size()[1]/2)):
+            i += 1
+        return i
+    
+    def prochaine_direction(self):
+        for i in range (4):
+            if(not self.collide_distance(i,self.epaisseur_bord_mask()+2)):
+                return i
 
 class Case(pygame.sprite.Sprite):
     
