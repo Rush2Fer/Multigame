@@ -182,7 +182,7 @@ class Pacman(pygame.sprite.Sprite):
                     self.rect.y += 1
                 elif (self.direction == gauche):
                     self.rect.x -= 1
-        pygame.sprite.spritecollide(self, self.jeu.pastilles, True)
+        pygame.sprite.spritecollide(self, self.jeu.pastilles,True,pygame.sprite.collide_mask)
         
     def collide_droit(self):
         return self.collide_distance(self.direction,1)
