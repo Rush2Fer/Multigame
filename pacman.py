@@ -169,9 +169,9 @@ class PacmanJeu(Jeu):
         taille_case = int(h/31)
         taille_pac = int(1.8*h/31)
         offset_x = int(w/2)-int(12.5*taille_case)
-        anienne_taille_case = int(previous_size[1]/31)
-        anienne_taille_pacman = int(1.8*previous_size[1]/31)
-        ancien_offset_x = int(previous_size[0]/2)-int(12.5*anienne_taille_case)
+        ancienne_taille_case = int(previous_size[1]/31)
+        ancienne_taille_pac = int(1.8*previous_size[1]/31)
+        ancien_offset_x = int(previous_size[0]/2)-int(12.5*ancienne_taille_case)
         
         # print(w)
         # print(h)
@@ -179,16 +179,22 @@ class PacmanJeu(Jeu):
         # print(taille_pac)
         # print(offset_x)
         # print(anienne_taille_case)
-        # print(anienne_taille_pacman)
+        # print(ancienne_taille_pacman)
         # print(ancien_offset_x)
         #pacman
-        x, y = (self.pac.rect.x-ancien_offset_x)/anienne_taille_pacman, self.pac.rect.y/anienne_taille_pacman
+        x, y = (self.pac.rect.x-ancien_offset_x+ancienne_taille_pac/2)/ancienne_taille_case, ((self.pac.rect.y/ancienne_taille_case)*3+1)/3
         self.pac.rect = self.pac.image.get_rect()
-        self.pac.rect.x = offset_x+taille_pac*x
-        self.pac.rect.y = taille_pac*y
+        self.pac.rect.x = offset_x+taille_case*x-taille_pac/2
+        self.pac.rect.y = taille_case*((y*3-1)/3)
+        
         #map
         for sprite in self.murs.sprites():
-            x, y = (sprite.rect.x-ancien_offset_x)/anienne_taille_case, sprite.rect.y/anienne_taille_case
+            x, y = (sprite.rect.x-ancien_offset_x)/ancienne_taille_case, sprite.rect.y/ancienne_taille_case
+            sprite.rect = sprite.image.get_rect()
+            sprite.rect.x = x*taille_case+offset_x
+            sprite.rect.y = y*taille_case
+        for sprite in self.pastilles.sprites():
+            x, y = (sprite.rect.x-ancien_offset_x)/ancienne_taille_case, sprite.rect.y/ancienne_taille_case
             sprite.rect = sprite.image.get_rect()
             sprite.rect.x = x*taille_case+offset_x
             sprite.rect.y = y*taille_case

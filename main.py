@@ -1,5 +1,4 @@
 from pacman import PacmanJeu
-from pacman import Pacman
 
 import pygame
 pygame.init()
