@@ -76,6 +76,7 @@ class PacmanJeu(Jeu):
         self.fantomes = pygame.sprite.Group()
         self.init_fantomes()
         self.time_last_animation = 0
+        self.score = 0
         
         
     def init_map(self):
@@ -211,7 +212,7 @@ class PacmanJeu(Jeu):
     def avance(self):
         self.pac.avance()
         for sprite in self.fantomes.sprites():
-            sprite.avance()
+            sprite.deplace()
 
     def __repr__(self):
         return "Objet PacmanJeu"
@@ -239,23 +240,23 @@ class Pacman(pygame.sprite.Sprite):
         if (self.direction != self.direction_voulue and not self.collide_tourne(self.direction_voulue)):
             self.direction = self.direction_voulue
             if (self.direction == bas):
-                self.rect.y -= 1
+                self.rect.y -= 2
             elif (self.direction == droite):
-                self.rect.x += 1
+                self.rect.x += 2
             elif (self.direction == haut):
-                self.rect.y += 1
+                self.rect.y += 2
             elif (self.direction == gauche):
-                self.rect.x -= 1
+                self.rect.x -= 2
         else:
             if (not self.collide_droit()):
                 if (self.direction == bas):
-                    self.rect.y -= 1
+                    self.rect.y -= 2
                 elif (self.direction == droite):
-                    self.rect.x += 1
+                    self.rect.x += 2
                 elif (self.direction == haut):
-                    self.rect.y += 1
+                    self.rect.y += 2
                 elif (self.direction == gauche):
-                    self.rect.x -= 1
+                    self.rect.x -= 2
         self.image = images_pacman[self.animation][self.direction]
         pygame.sprite.spritecollide(self, self.jeu.pastilles,True,pygame.sprite.collide_mask)
         
@@ -303,6 +304,8 @@ class Fantome(pygame.sprite.Sprite):
         super().__init__()
         self.jeu = jeu
         self.numero = num
+        self.but = (11,13)
+        
         self.direction = bas
         self.animation = 0
         w ,h = self.jeu.screen_size
@@ -315,20 +318,28 @@ class Fantome(pygame.sprite.Sprite):
         offset_x = int(w/2)-int(h/2)+int(1.5*taille_case)
         self.rect.x = offset_x+taille_case*14-taille_fant/2
         self.rect.y = taille_case*((11*3-1)/3)
+        self.appeure = 0
         
-    def avance(self):#IA pour bouger fantomes vers pacman
-        if (not self.collide_droit()):
-            if (self.direction == bas):
-                self.rect.y -= 1
-            elif (self.direction == droite):
-                self.rect.x += 1
-            elif (self.direction == haut):
-                self.rect.y += 1
-            elif (self.direction == gauche):
-                self.rect.x -= 1
-        else:
-            self.direction = self.prochaine_direction()
+    def deplace(self):
+        """Si le fantom est à une intersection,
+        recalcule la case but et détermine la direction du chemin le plus court.
+        Modifie le rect du fantome pour qu'il se déplace"""
+        if(self.in_intersection()):
+            self.calcul_but()
+            self.calcul_direction()
+        if (self.direction == bas):
+            self.rect.y -= 2
+        elif (self.direction == droite):
+            self.rect.x += 2
+        elif (self.direction == haut):
+            self.rect.y += 2
+        elif (self.direction == gauche):
+            self.rect.x -= 2
+        
         self.image = images_fantome[self.animation][self.direction]
+        
+    def in_intersection(self):
+        return False
     
     def collide_droit(self):
         return self.collide_distance(self.direction,self.epaisseur_bord_mask()+2)
@@ -367,11 +378,6 @@ class Fantome(pygame.sprite.Sprite):
         while not self.mask.get_at((i,self.mask.get_size()[1]/2)):
             i += 1
         return i
-    
-    def prochaine_direction(self):
-        for i in range (4):
-            if(not self.collide_distance(i,self.epaisseur_bord_mask()+2)):
-                return i
 
 class Case(pygame.sprite.Sprite):
     
