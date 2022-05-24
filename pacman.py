@@ -4,6 +4,7 @@ clock = pygame.time.Clock()
 from jeu import Jeu
 import math
 
+SPAWN_FANTOME_ROUGE = pygame.event.custom_type()
 SPAWN_FANTOME_ROSE = pygame.event.custom_type()
 SPAWN_FANTOME_BLEU = pygame.event.custom_type()
 SPAWN_FANTOME_ORANGE = pygame.event.custom_type()
@@ -135,7 +136,7 @@ class PacmanJeu(Jeu):
         self.fantomes.add(self.bleu)
         self.orange = Fantome(self, "Orange")
         self.fantomes.add(self.orange)
-        pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 2000,1)
+        pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 5000,1)
     
     def affiche(self):
         self.screen.fill(pygame.Color(0,0,0))
@@ -164,7 +165,7 @@ class PacmanJeu(Jeu):
             if (event.type == SPAWN_FANTOME_ROSE):
                 if(self.rose.y == 9):
                     self.rose.actif = 1
-                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 2000,1)
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 5000,1)
                     pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 0)
                 elif(self.rose.y == 11):
                     pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 40)
@@ -173,10 +174,21 @@ class PacmanJeu(Jeu):
                 else:
                     self.rose.y = round(self.rose.y - 0.1,1)
                     self.rose.update_rect()
+            if (event.type == SPAWN_FANTOME_ROUGE):
+                if(self.rouge.y == 9):
+                    self.rouge.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 0)
+                elif(self.rouge.y == 11):
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 40)
+                    self.rouge.y = round(self.rouge.y - 0.1,1)
+                    self.rouge.update_rect()
+                else:
+                    self.rouge.y = round(self.rouge.y - 0.1,1)
+                    self.rouge.update_rect()
             if (event.type == SPAWN_FANTOME_BLEU):
                 if(self.bleu.y == 9):
                     self.bleu.actif = 1
-                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ORANGE), 2000,1)
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ORANGE), 5000,1)
                     pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 0)
                 elif(self.bleu.y == 11):
                     if(self.bleu.x == 10):
@@ -476,6 +488,7 @@ class Fantome(pygame.sprite.Sprite):
         else:
             if(pygame.sprite.collide_mask(self, self.jeu.pac)!=None):
                 self.kill()
+                pygame.time.set_timer(SPAWN_FANTOME_ROUGE, 1000)
     
 class Pastille(pygame.sprite.Sprite):
     
