@@ -4,10 +4,13 @@ clock = pygame.time.Clock()
 from jeu import Jeu
 import math
 
-SPAWN_FANTOME_ROUGE = pygame.event.custom_type()
 SPAWN_FANTOME_ROSE = pygame.event.custom_type()
 SPAWN_FANTOME_BLEU = pygame.event.custom_type()
 SPAWN_FANTOME_ORANGE = pygame.event.custom_type()
+RESPAWN_FANTOME_ROUGE = pygame.event.custom_type()
+RESPAWN_FANTOME_ROSE = pygame.event.custom_type()
+RESPAWN_FANTOME_BLEU = pygame.event.custom_type()
+RESPAWN_FANTOME_ORANGE = pygame.event.custom_type()
 FIN_BONUS = pygame.event.custom_type()
 BLINK_FANTOME = pygame.event.custom_type()
 
@@ -66,32 +69,32 @@ DIRECTIONS2INDEX = [[None,1,3],
               [2,None,None]
               ]
 #IMAGES_PACMAN[direction][animation]
-IMAGES_PACMAN = [[pygame.image.load("images/pacman_00.png"),pygame.image.load("images/pacman_10.png")],
-                 [pygame.image.load("images/pacman_01.png"),pygame.image.load("images/pacman_11.png")],
-                 [pygame.image.load("images/pacman_02.png"),pygame.image.load("images/pacman_12.png")],
-                 [pygame.image.load("images/pacman_03.png"),pygame.image.load("images/pacman_13.png")]
+IMAGES_PACMAN = [[pygame.image.load("images/Pacman/pacman_00.png"),pygame.image.load("images/Pacman/pacman_10.png")],
+                 [pygame.image.load("images/Pacman/pacman_01.png"),pygame.image.load("images/Pacman/pacman_11.png")],
+                 [pygame.image.load("images/Pacman/pacman_02.png"),pygame.image.load("images/Pacman/pacman_12.png")],
+                 [pygame.image.load("images/Pacman/pacman_03.png"),pygame.image.load("images/Pacman/pacman_13.png")]
                  ]
 DICT_COULEUR2INDEX = dict(Rouge = 0, Bleu = 1, Rose = 2, Orange = 3)
 #IMAGES_FANTOMES[couleur][direction][animation]
-IMAGES_FANTOMES = [[[pygame.image.load("images/rouge_00.png"),pygame.image.load("images/rouge_10.png")],
-                  [pygame.image.load("images/rouge_01.png"),pygame.image.load("images/rouge_11.png")],
-                  [pygame.image.load("images/rouge_02.png"),pygame.image.load("images/rouge_12.png")],
-                  [pygame.image.load("images/rouge_03.png"),pygame.image.load("images/rouge_13.png")]],
-                 [[pygame.image.load("images/bleu_00.png"),pygame.image.load("images/bleu_10.png")],
-                  [pygame.image.load("images/bleu_01.png"),pygame.image.load("images/bleu_11.png")],
-                  [pygame.image.load("images/bleu_02.png"),pygame.image.load("images/bleu_12.png")],
-                  [pygame.image.load("images/bleu_03.png"),pygame.image.load("images/bleu_13.png")]],
-                 [[pygame.image.load("images/rose_00.png"),pygame.image.load("images/rose_10.png")],
-                  [pygame.image.load("images/rose_01.png"),pygame.image.load("images/rose_11.png")],
-                  [pygame.image.load("images/rose_02.png"),pygame.image.load("images/rose_12.png")],
-                  [pygame.image.load("images/rose_03.png"),pygame.image.load("images/rose_13.png")]],
-                 [[pygame.image.load("images/orange_00.png"),pygame.image.load("images/orange_10.png")],
-                  [pygame.image.load("images/orange_01.png"),pygame.image.load("images/orange_11.png")],
-                  [pygame.image.load("images/orange_02.png"),pygame.image.load("images/orange_12.png")],
-                  [pygame.image.load("images/orange_03.png"),pygame.image.load("images/orange_13.png")]],
+IMAGES_FANTOMES = [[[pygame.image.load("images/Pacman/rouge_00.png"),pygame.image.load("images/Pacman/rouge_10.png")],
+                  [pygame.image.load("images/Pacman/rouge_01.png"),pygame.image.load("images/Pacman/rouge_11.png")],
+                  [pygame.image.load("images/Pacman/rouge_02.png"),pygame.image.load("images/Pacman/rouge_12.png")],
+                  [pygame.image.load("images/Pacman/rouge_03.png"),pygame.image.load("images/Pacman/rouge_13.png")]],
+                 [[pygame.image.load("images/Pacman/bleu_00.png"),pygame.image.load("images/Pacman/bleu_10.png")],
+                  [pygame.image.load("images/Pacman/bleu_01.png"),pygame.image.load("images/Pacman/bleu_11.png")],
+                  [pygame.image.load("images/Pacman/bleu_02.png"),pygame.image.load("images/Pacman/bleu_12.png")],
+                  [pygame.image.load("images/Pacman/bleu_03.png"),pygame.image.load("images/Pacman/bleu_13.png")]],
+                 [[pygame.image.load("images/Pacman/rose_00.png"),pygame.image.load("images/Pacman/rose_10.png")],
+                  [pygame.image.load("images/Pacman/rose_01.png"),pygame.image.load("images/Pacman/rose_11.png")],
+                  [pygame.image.load("images/Pacman/rose_02.png"),pygame.image.load("images/Pacman/rose_12.png")],
+                  [pygame.image.load("images/Pacman/rose_03.png"),pygame.image.load("images/Pacman/rose_13.png")]],
+                 [[pygame.image.load("images/Pacman/orange_00.png"),pygame.image.load("images/Pacman/orange_10.png")],
+                  [pygame.image.load("images/Pacman/orange_01.png"),pygame.image.load("images/Pacman/orange_11.png")],
+                  [pygame.image.load("images/Pacman/orange_02.png"),pygame.image.load("images/Pacman/orange_12.png")],
+                  [pygame.image.load("images/Pacman/orange_03.png"),pygame.image.load("images/Pacman/orange_13.png")]],
                  ]
-IMAGES_FANTOMES_APPEURE = [[pygame.image.load("images/fantome_00.png"),pygame.image.load("images/fantome_01.png")],
-                           [pygame.image.load("images/fantome_10.png"),pygame.image.load("images/fantome_11.png")]
+IMAGES_FANTOMES_APPEURE = [[pygame.image.load("images/Pacman/fantome_00.png"),pygame.image.load("images/Pacman/fantome_01.png")],
+                           [pygame.image.load("images/Pacman/fantome_10.png"),pygame.image.load("images/Pacman/fantome_11.png")]
                            ]
 
 class PacmanJeu(Jeu):
@@ -100,7 +103,6 @@ class PacmanJeu(Jeu):
         super().__init__()
         self.taille_case = int(self.screen.get_height()/NB_LIGNES)
         self.decalage_x_map = int(self.screen.get_width()/2 - self.taille_case*9.5)
-        self.bonus = 0
         self.time_last_animation = 0
         self.score = 0
         self.murs = pygame.sprite.Group()
@@ -174,17 +176,6 @@ class PacmanJeu(Jeu):
                 else:
                     self.rose.y = round(self.rose.y - 0.1,1)
                     self.rose.update_rect()
-            if (event.type == SPAWN_FANTOME_ROUGE):
-                if(self.rouge.y == 9):
-                    self.rouge.actif = 1
-                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 0)
-                elif(self.rouge.y == 11):
-                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 40)
-                    self.rouge.y = round(self.rouge.y - 0.1,1)
-                    self.rouge.update_rect()
-                else:
-                    self.rouge.y = round(self.rouge.y - 0.1,1)
-                    self.rouge.update_rect()
             if (event.type == SPAWN_FANTOME_BLEU):
                 if(self.bleu.y == 9):
                     self.bleu.actif = 1
@@ -214,8 +205,68 @@ class PacmanJeu(Jeu):
                 else:
                     self.orange.y = round(self.orange.y - 0.1,1)
                     self.orange.update_rect()
+            if (event.type == RESPAWN_FANTOME_ROUGE):
+                if(self.rouge.y == 9):
+                    self.rouge.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_ROUGE), 0)
+                elif(self.rouge.y == 11):
+                    pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_ROUGE), 40)
+                    self.fantomes.add(self.rouge)
+                    self.rouge.y = round(self.rouge.y - 0.1,1)
+                    self.rouge.update_rect()
+                else:
+                    self.rouge.y = round(self.rouge.y - 0.1,1)
+                    self.rouge.update_rect()
+                    self.rouge.update_image()
+            if (event.type == RESPAWN_FANTOME_ROSE):
+                if(self.rose.y == 9):
+                    self.rose.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_ROSE), 0)
+                elif(self.rose.y == 11):
+                    pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_ROSE), 40)
+                    self.fantomes.add(self.rose)
+                    self.rose.y = round(self.rose.y - 0.1,1)
+                    self.rose.update_rect()
+                else:
+                    self.rose.y = round(self.rose.y - 0.1,1)
+                    self.rose.update_rect()
+                    self.rose.update_image()
+            if (event.type == RESPAWN_FANTOME_BLEU):
+                if(self.bleu.y == 9):
+                    self.bleu.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_BLEU), 0)
+                elif(self.bleu.y == 11):
+                    if(self.bleu.x == 10):
+                        self.bleu.y = round(self.bleu.y - 0.1,1)
+                    else:
+                        pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_BLEU), 40)
+                        self.fantomes.add(self.bleu)
+                        self.bleu.x = round(self.bleu.x + 0.1,1)
+                        self.bleu.update_rect()
+                else:
+                    self.bleu.y = round(self.bleu.y - 0.1,1)
+                    self.bleu.update_rect()
+                    self.bleu.update_image()
+            if (event.type == RESPAWN_FANTOME_ORANGE):
+                if(self.orange.y == 9):
+                    self.orange.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_ORANGE), 0)
+                elif(self.orange.y == 11):
+                    if(self.orange.x == 10):
+                        self.orange.y = round(self.orange.y - 0.1,1)
+                    else:
+                        pygame.time.set_timer(pygame.event.Event(RESPAWN_FANTOME_ORANGE), 40)
+                        self.fantomes.add(self.orange)
+                        self.orange.x = round(self.orange.x - 0.1,1)
+                        self.orange.update_rect()
+                        self.orange.update_image()
+                else:
+                    self.orange.y = round(self.orange.y - 0.1,1)
+                    self.orange.update_rect()
             if(event.type == FIN_BONUS):
-                self.bonus = 0
+                for fantome in self.fantomes.sprites():
+                    fantome.appeure = 0
+                    fantome.animation_appeure = 0
                 pygame.time.set_timer(BLINK_FANTOME, 0)
                 pygame.time.set_timer(FIN_BONUS, 0)
             if(event.type == BLINK_FANTOME):
@@ -254,28 +305,28 @@ class Mur(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         if(x==10 and y==10):
-            self.image = pygame.transform.scale(pygame.image.load("images/porte0.png"),(self.jeu.taille_case,self.jeu.taille_case))
+            self.image = pygame.transform.scale(pygame.image.load("images/Pacman/porte0.png"),(self.jeu.taille_case,self.jeu.taille_case))
         elif(x!=0 and x!=NB_COLONNES-1 and y!=0 and y!=NB_LIGNES-1):
-            self.image = pygame.transform.scale(pygame.image.load("images/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+            self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
         else:
             if(x==0):
                 if(y==0):
-                    self.image = pygame.transform.scale(pygame.image.load("images/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+"00.png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+"00.png"),(self.jeu.taille_case,self.jeu.taille_case))
                 elif(y==NB_LIGNES-1):
-                    self.image = pygame.transform.scale(pygame.image.load("images/mur_"+str(MURS[x+1][y])+"00"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+"00"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
                 else:
-                    self.image = pygame.transform.scale(pygame.image.load("images/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+"0"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+"0"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
             elif(x==NB_COLONNES-1):
                 if(y==0):
-                    self.image = pygame.transform.scale(pygame.image.load("images/mur_0"+str(MURS[x][y+1])+str(MURS[x-1][y])+"0.png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_0"+str(MURS[x][y+1])+str(MURS[x-1][y])+"0.png"),(self.jeu.taille_case,self.jeu.taille_case))
                 elif(y==NB_LIGNES-1):
-                    self.image = pygame.transform.scale(pygame.image.load("images/mur_00"+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_00"+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
                 else:
-                    self.image = pygame.transform.scale(pygame.image.load("images/mur_0"+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_0"+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
             elif(y==0):
-                self.image = pygame.transform.scale(pygame.image.load("images/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(0)+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(0)+".png"),(self.jeu.taille_case,self.jeu.taille_case))
             elif(y==NB_LIGNES-1):
-                self.image = pygame.transform.scale(pygame.image.load("images/mur_"+str(MURS[x+1][y])+str(0)+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(0)+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
         self.rect = self.image.get_rect()
         self.update_rect()
     
@@ -293,7 +344,7 @@ class Pacman(pygame.sprite.Sprite):
         self.direction = BAS
         self.direction_voulue = BAS
         self.animation = 1
-        self.image = pygame.transform.scale(pygame.image.load("images/pacman_00.png"),(self.jeu.taille_case,self.jeu.taille_case))
+        self.image = pygame.transform.scale(pygame.image.load("images/Pacman/pacman_00.png"),(self.jeu.taille_case,self.jeu.taille_case))
         self.rect = self.image.get_rect()
         self.update_rect()
     
@@ -330,7 +381,8 @@ class Pacman(pygame.sprite.Sprite):
         for i in range(len(collisions)):
             if(type(collisions[i])==Bonus):
                 self.jeu.score += 50
-                self.jeu.bonus = 1
+                for fantome in self.jeu.fantomes.sprites():
+                    fantome.appeure = 1
                 pygame.time.set_timer(FIN_BONUS, 7000)
                 pygame.time.set_timer(BLINK_FANTOME, 5000)
                 
@@ -363,7 +415,8 @@ class Fantome(pygame.sprite.Sprite):
         self.but = (9,8)
         self.animation = 1
         self.animation_appeure = 0
-        self.image = pygame.transform.scale(pygame.image.load("images/"+self.nom+"_00.png"),(self.jeu.taille_case,self.jeu.taille_case))
+        self.appeure = 0
+        self.image = pygame.transform.scale(pygame.image.load("images/Pacman/"+self.nom+"_00.png"),(self.jeu.taille_case,self.jeu.taille_case))
         self.rect = self.image.get_rect()
         self.update_rect()
     
@@ -422,7 +475,7 @@ class Fantome(pygame.sprite.Sprite):
         return directions
     
     def objectif(self):
-        if(not self.jeu.bonus):
+        if(not self.appeure):
             if(self.nom=="Rouge"):
                 return self.jeu.pac.x - self.x, self.jeu.pac.y - self.y
             if(self.nom=="Bleu"):
@@ -476,19 +529,37 @@ class Fantome(pygame.sprite.Sprite):
                     return (BAS,GAUCHE,DROITE,HAUT)
                 
     def update_image(self):
-        if(not self.jeu.bonus):
+        if(not self.appeure):
             self.image = pygame.transform.scale(IMAGES_FANTOMES[DICT_COULEUR2INDEX[self.nom]][DIRECTIONS2INDEX[self.direction[0]][self.direction[1]]][self.animation],(self.jeu.taille_case,self.jeu.taille_case))
         else:
             self.image = pygame.transform.scale(IMAGES_FANTOMES_APPEURE[self.animation_appeure][self.animation],(self.jeu.taille_case,self.jeu.taille_case))
     
     def check_collision(self):
-        if(not self.jeu.bonus):
+        if(not self.appeure):
             if(pygame.sprite.collide_mask(self, self.jeu.pac)!=None):
                 self.jeu.running = 0
         else:
             if(pygame.sprite.collide_mask(self, self.jeu.pac)!=None):
                 self.kill()
-                pygame.time.set_timer(SPAWN_FANTOME_ROUGE, 1000)
+                self.actif = 0
+                self.appeure = 0
+                self.animation_appeure = 0
+                if(self == self.jeu.rouge):
+                    self.x = 10
+                    self.y = 11
+                    pygame.time.set_timer(RESPAWN_FANTOME_ROUGE, 1000)
+                if(self == self.jeu.rose):
+                    self.x = 10
+                    self.y = 11
+                    pygame.time.set_timer(RESPAWN_FANTOME_ROSE, 1000)
+                if(self == self.jeu.bleu):
+                    self.x = 9
+                    self.y = 11
+                    pygame.time.set_timer(RESPAWN_FANTOME_BLEU, 1000)
+                if(self == self.jeu.orange):
+                    self.x = 11
+                    self.y = 11
+                    pygame.time.set_timer(RESPAWN_FANTOME_ORANGE, 1000)
     
 class Pastille(pygame.sprite.Sprite):
     
@@ -497,7 +568,7 @@ class Pastille(pygame.sprite.Sprite):
         self.jeu = jeu
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale(pygame.image.load("images/pastille.png"),(self.jeu.taille_case,self.jeu.taille_case))
+        self.image = pygame.transform.scale(pygame.image.load("images/Pacman/pastille.png"),(self.jeu.taille_case,self.jeu.taille_case))
         self.rect = self.image.get_rect()
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
         self.rect.y = self.jeu.taille_case*self.y
@@ -509,7 +580,7 @@ class Bonus(pygame.sprite.Sprite):
         self.jeu = jeu
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale(pygame.image.load("images/bonus.png"),(self.jeu.taille_case,self.jeu.taille_case))
+        self.image = pygame.transform.scale(pygame.image.load("images/Pacman/bonus.png"),(self.jeu.taille_case,self.jeu.taille_case))
         self.rect = self.image.get_rect()
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
         self.rect.y = self.jeu.taille_case*self.y
