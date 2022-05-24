@@ -162,13 +162,46 @@ class PacmanJeu(Jeu):
                 if (event.key == pygame.K_LEFT):
                     self.pac.direction_voulue = GAUCHE
             if (event.type == SPAWN_FANTOME_ROSE):
-                self.rose.actif = 1
-                pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 2000,1)
+                if(self.rose.y == 9):
+                    self.rose.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 2000,1)
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 0)
+                elif(self.rose.y == 11):
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 40)
+                    self.rose.y = round(self.rose.y - 0.1,1)
+                    self.rose.update_rect()
+                else:
+                    self.rose.y = round(self.rose.y - 0.1,1)
+                    self.rose.update_rect()
             if (event.type == SPAWN_FANTOME_BLEU):
-                self.bleu.actif = 1
-                pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ORANGE), 2000,1)
+                if(self.bleu.y == 9):
+                    self.bleu.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ORANGE), 2000,1)
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 0)
+                elif(self.bleu.y == 11):
+                    if(self.bleu.x == 10):
+                        self.bleu.y = round(self.bleu.y - 0.1,1)
+                    else:
+                        pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 40)
+                        self.bleu.x = round(self.bleu.x + 0.1,1)
+                        self.bleu.update_rect()
+                else:
+                    self.bleu.y = round(self.bleu.y - 0.1,1)
+                    self.bleu.update_rect()
             if (event.type == SPAWN_FANTOME_ORANGE):
-                self.orange.actif = 1
+                if(self.orange.y == 9):
+                    self.orange.actif = 1
+                    pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ORANGE), 0)
+                elif(self.orange.y == 11):
+                    if(self.orange.x == 10):
+                        self.orange.y = round(self.orange.y - 0.1,1)
+                    else:
+                        pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ORANGE), 40)
+                        self.orange.x = round(self.orange.x - 0.1,1)
+                        self.orange.update_rect()
+                else:
+                    self.orange.y = round(self.orange.y - 0.1,1)
+                    self.orange.update_rect()
             if(event.type == FIN_BONUS):
                 self.bonus = 0
                 pygame.time.set_timer(BLINK_FANTOME, 0)
@@ -303,16 +336,16 @@ class Fantome(pygame.sprite.Sprite):
             self.y = 9
             self.actif = 1
         if(nom=="Bleu"):
-            self.x = 10
-            self.y = 9
+            self.x = 9
+            self.y = 11
             self.actif = 0
         if(nom=="Rose"):
             self.x = 10
-            self.y = 9
+            self.y = 11
             self.actif = 0
         if(nom=="Orange"):
-            self.x = 10
-            self.y = 9
+            self.x = 11
+            self.y = 11
             self.actif = 0
         self.direction = BAS
         self.but = (9,8)
