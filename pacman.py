@@ -1,8 +1,7 @@
 import pygame, sys
 pygame.init()
 clock = pygame.time.Clock()
-from jeu import Jeu
-import math
+from math import dist
 
 SPAWN_FANTOME_ROSE = pygame.event.custom_type()
 SPAWN_FANTOME_BLEU = pygame.event.custom_type()
@@ -97,10 +96,15 @@ IMAGES_FANTOMES_APPEURE = [[pygame.image.load("images/Pacman/fantome_00.png"),py
                            [pygame.image.load("images/Pacman/fantome_10.png"),pygame.image.load("images/Pacman/fantome_11.png")]
                            ]
 
-class PacmanJeu(Jeu):
+class PacmanJeu:
     
     def __init__(self):
         super().__init__()
+        pygame.display.set_caption("Multigame")
+        pygame.display.set_icon(pygame.image.load("images/icon.png"))
+        self.screen = pygame.display.set_mode((pygame.display.get_desktop_sizes()[0][0]-100,pygame.display.get_desktop_sizes()[0][1]-100),pygame.RESIZABLE)
+        self.running = 1
+        self.events = []
         self.taille_case = int(self.screen.get_height()/(NB_LIGNES+2))
         self.decalage_x_map = int(self.screen.get_width()/2 - self.taille_case*9.5)
         self.decalage_y_map = self.taille_case
@@ -113,6 +117,32 @@ class PacmanJeu(Jeu):
         self.fantomes = pygame.sprite.Group()
         self.font = pygame.font.SysFont(None, int(self.taille_case*1.5))
         self.nouveau_niveau()
+    
+    def main(self):
+        while(self.pac.vies!=0):
+            while(self.running):
+                
+                self.resolution_events()
+                
+                self.affiche()
+                
+                self.update_animations()
+                
+                self.avance()
+                
+                self.check_win()
+                
+                clock.tick(60)
+                pygame.display.flip()
+            if(len(self.pastilles.sprites())==0):
+                self.animation_win()
+                self.nouveau_niveau()
+            elif(self.pac.vies!=0):
+                self.suite_manche()
+                
+        self.game_over()
+        pygame.time.delay(3000)
+            
     
     def nouveau_niveau(self):
         self.init_pastilles()
@@ -567,7 +597,7 @@ class Fantome(pygame.sprite.Sprite):
             if(self.nom=="Rose"):
                 return self.jeu.pac.x + self.jeu.pac.direction[0]*2 - self.x, self.jeu.pac.y + self.jeu.pac.direction[1]*2 - self.y
             if(self.nom=="Orange"):
-                if(math.dist((self.x,self.y),(self.jeu.pac.x,self.jeu.pac.y))<=6):
+                if(dist((self.x,self.y),(self.jeu.pac.x,self.jeu.pac.y))<=6):
                     if(self.x<=9 and self.y<=10):
                         return NB_COLONNES-1,NB_LIGNES-1
                     elif(self.x>9 and self.y<=10):
@@ -675,32 +705,4 @@ class Bonus(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
         self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
-        
-    
-jeu = PacmanJeu()
-while(jeu.pac.vies!=0):
-    while(jeu.running):
-        
-        jeu.resolution_events()
-        
-        jeu.affiche()
-        
-        jeu.update_animations()
-        
-        jeu.avance()
-        
-        jeu.check_win()
-        
-        clock.tick(60)
-        pygame.display.flip()
-    if(len(jeu.pastilles.sprites())==0):
-        jeu.animation_win()
-        jeu.nouveau_niveau()
-    elif(jeu.pac.vies!=0):
-        jeu.suite_manche()
-        
-jeu.game_over()
-pygame.time.delay(5000)
-    
-pygame.quit()
     
