@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 pygame.init()
 clock = pygame.time.Clock()
 from jeu import Jeu
@@ -75,7 +75,7 @@ IMAGES_PACMAN = [[pygame.image.load("images/Pacman/pacman_00.png"),pygame.image.
                  [pygame.image.load("images/Pacman/pacman_03.png"),pygame.image.load("images/Pacman/pacman_13.png")]
                  ]
 DICT_COULEUR2INDEX = dict(Rouge = 0, Bleu = 1, Rose = 2, Orange = 3)
-#IMAGES_FANTOMES[couleur][direction][animation]
+#IMAGES_FANTOMES[DICT_COULEUR2INDEX[couleur]][direction][animation]
 IMAGES_FANTOMES = [[[pygame.image.load("images/Pacman/rouge_00.png"),pygame.image.load("images/Pacman/rouge_10.png")],
                   [pygame.image.load("images/Pacman/rouge_01.png"),pygame.image.load("images/Pacman/rouge_11.png")],
                   [pygame.image.load("images/Pacman/rouge_02.png"),pygame.image.load("images/Pacman/rouge_12.png")],
@@ -101,17 +101,33 @@ class PacmanJeu(Jeu):
     
     def __init__(self):
         super().__init__()
-        self.taille_case = int(self.screen.get_height()/NB_LIGNES)
+        self.taille_case = int(self.screen.get_height()/(NB_LIGNES+2))
         self.decalage_x_map = int(self.screen.get_width()/2 - self.taille_case*9.5)
+        self.decalage_y_map = self.taille_case
         self.time_last_animation = 0
         self.score = 0
         self.murs = pygame.sprite.Group()
         self.init_murs()
         self.pastilles = pygame.sprite.Group()
-        self.init_pastilles()
         self.pac = Pacman(self)
         self.fantomes = pygame.sprite.Group()
+        self.font = pygame.font.SysFont(None, int(self.taille_case*1.5))
+        self.nouveau_niveau()
+    
+    def nouveau_niveau(self):
+        self.init_pastilles()
+        self.suite_manche()
+    
+    def suite_manche(self):
+        self.running = 1
+        self.fantomes.empty()
         self.init_fantomes()
+        self.pac.reset()
+        self.affiche()
+        img = self.font.render('Ready !', True, pygame.Color('yellow'))
+        self.screen.blit(img, (self.decalage_x_map+int(8.7*self.taille_case), 14*self.taille_case))
+        pygame.display.flip()
+        pygame.time.delay(1000)
     
     def init_murs(self):
         for x in range(NB_COLONNES):
@@ -138,7 +154,10 @@ class PacmanJeu(Jeu):
         self.fantomes.add(self.bleu)
         self.orange = Fantome(self, "Orange")
         self.fantomes.add(self.orange)
+        pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 0)
         pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ROSE), 5000,1)
+        pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_BLEU), 0)
+        pygame.time.set_timer(pygame.event.Event(SPAWN_FANTOME_ORANGE), 0)
     
     def affiche(self):
         self.screen.fill(pygame.Color(0,0,0))
@@ -146,16 +165,28 @@ class PacmanJeu(Jeu):
         self.murs.draw(self.screen)
         self.pastilles.draw(self.screen)
         self.fantomes.draw(self.screen)
-            
+        self.affiche_score()
+        self.affiche_vies()
+        
+    def affiche_score(self):
+        img = self.font.render('score : {}'.format(self.score), True, pygame.Color('white'))
+        self.screen.blit(img, (self.decalage_x_map, 1))
+        
+    def affiche_vies(self):
+        for vie in range(self.pac.vies):
+            self.screen.blit(pygame.transform.scale(IMAGES_PACMAN[2][1],(self.taille_case,self.taille_case)),(self.decalage_x_map+vie*self.taille_case,self.decalage_y_map+NB_LIGNES*self.taille_case+1))
+        
             
     def resolution_events(self):
         self.events += pygame.event.get()
         for event in self.events:
             if (event.type == pygame.QUIT):
-                self.running = False
+                pygame.quit()
+                sys.exit()
             if (event.type == pygame.KEYDOWN):
                 if (event.key == pygame.K_ESCAPE):
-                    self.running = False
+                    pygame.quit()
+                    sys.exit()
                 if (event.key == pygame.K_DOWN):
                     self.pac.direction_voulue = BAS
                 if (event.key == pygame.K_UP):
@@ -296,6 +327,34 @@ class PacmanJeu(Jeu):
     def check_win(self):
         if(len(self.pastilles.sprites())==0):
             self.running = 0
+    
+    def animation_win(self):
+        for i in range(3):
+            self.screen.fill(pygame.Color(0,0,0))
+            self.pastilles.draw(self.screen)
+            self.affiche_score()
+            self.affiche_vies()
+            self.murs.draw(self.screen)
+            pygame.display.flip()
+            pygame.time.delay(500)
+            self.screen.fill(pygame.Color(0,0,0))
+            self.pastilles.draw(self.screen)
+            self.affiche_score()
+            self.affiche_vies()
+            for mur in self.murs.sprites():
+                self.screen.blit(mur.get_image(True), mur.rect)
+            pygame.display.flip()
+            pygame.time.delay(500)
+            
+    
+    def game_over(self):
+        self.screen.fill(pygame.Color(0,0,0))
+        self.murs.draw(self.screen)
+        self.pastilles.draw(self.screen)
+        self.affiche_score()
+        img = self.font.render('game over', True, pygame.Color('red'))
+        self.screen.blit(img, (self.decalage_x_map+8*self.taille_case, 14*self.taille_case))
+        pygame.display.flip()
 
 class Mur(pygame.sprite.Sprite):
     
@@ -304,41 +363,53 @@ class Mur(pygame.sprite.Sprite):
         self.jeu = jeu
         self.x = x
         self.y = y
+        self.image = self.get_image()
+        self.rect = self.image.get_rect()
+        self.update_rect()
+        
+    def get_image(self, image_blanche = False):
+        x=self.x
+        y=self.y
+        base_nom_image = "images/Pacman/mur_"
+        if(image_blanche):
+            base_nom_image += "blanc_"
         if(x==10 and y==10):
-            self.image = pygame.transform.scale(pygame.image.load("images/Pacman/porte0.png"),(self.jeu.taille_case,self.jeu.taille_case))
+            return pygame.transform.scale(pygame.image.load("images/Pacman/porte0.png"),(self.jeu.taille_case,self.jeu.taille_case))
         elif(x!=0 and x!=NB_COLONNES-1 and y!=0 and y!=NB_LIGNES-1):
-            self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+            return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
         else:
             if(x==0):
                 if(y==0):
-                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+"00.png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+str(MURS[x][y+1])+"00.png"),(self.jeu.taille_case,self.jeu.taille_case))
                 elif(y==NB_LIGNES-1):
-                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+"00"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+"00"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
                 else:
-                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+"0"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+str(MURS[x][y+1])+"0"+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
             elif(x==NB_COLONNES-1):
                 if(y==0):
-                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_0"+str(MURS[x][y+1])+str(MURS[x-1][y])+"0.png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    return pygame.transform.scale(pygame.image.load(base_nom_image+"0"+str(MURS[x][y+1])+str(MURS[x-1][y])+"0.png"),(self.jeu.taille_case,self.jeu.taille_case))
                 elif(y==NB_LIGNES-1):
-                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_00"+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    return pygame.transform.scale(pygame.image.load(base_nom_image+"00"+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
                 else:
-                    self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_0"+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                    return pygame.transform.scale(pygame.image.load(base_nom_image+"0"+str(MURS[x][y+1])+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
             elif(y==0):
-                self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(0)+".png"),(self.jeu.taille_case,self.jeu.taille_case))
+                return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(0)+".png"),(self.jeu.taille_case,self.jeu.taille_case))
             elif(y==NB_LIGNES-1):
-                self.image = pygame.transform.scale(pygame.image.load("images/Pacman/mur_"+str(MURS[x+1][y])+str(0)+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
-        self.rect = self.image.get_rect()
-        self.update_rect()
+                return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+str(0)+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
     
     def update_rect(self):
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
-        self.rect.y = self.jeu.taille_case*self.y
+        self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
     
 class Pacman(pygame.sprite.Sprite):
     
     def __init__(self,jeu):
         super().__init__()
         self.jeu = jeu
+        self.vies = 3
+        self.reset()
+    
+    def reset(self):
         self.x = 10
         self.y = 17
         self.direction = BAS
@@ -350,7 +421,7 @@ class Pacman(pygame.sprite.Sprite):
     
     def update_rect(self):
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
-        self.rect.y = self.jeu.taille_case*self.y
+        self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
     
     def avance(self):
         if(self.direction==DROITE and self.x==20):
@@ -383,12 +454,25 @@ class Pacman(pygame.sprite.Sprite):
                 self.jeu.score += 50
                 for fantome in self.jeu.fantomes.sprites():
                     fantome.appeure = 1
+                    fantome.animation_appeure = 0
                 pygame.time.set_timer(FIN_BONUS, 7000)
                 pygame.time.set_timer(BLINK_FANTOME, 5000)
                 
     def update_image(self):
         self.image = pygame.transform.scale(IMAGES_PACMAN[DIRECTIONS2INDEX[self.direction[0]][self.direction[1]]][self.animation],(self.jeu.taille_case,self.jeu.taille_case))
-    
+
+    def animation_mort(self):
+        self.jeu.screen.fill(pygame.Color(0,0,0))
+        self.jeu.murs.draw(self.jeu.screen)
+        self.jeu.pastilles.draw(self.jeu.screen)
+        self.jeu.affiche_score()
+        self.jeu.affiche_vies()
+        for i in range(19):
+            pygame.draw.rect(self.jeu.screen, pygame.Color('black'), self.rect)
+            self.jeu.screen.blit(pygame.transform.scale(pygame.image.load("images/Pacman/pacman_mort_"+str(i)+".png"),(self.jeu.taille_case,self.jeu.taille_case)), self.rect)
+            pygame.display.flip()
+            pygame.time.delay(100)
+
 class Fantome(pygame.sprite.Sprite):
     
     def __init__(self,jeu,nom):
@@ -422,7 +506,7 @@ class Fantome(pygame.sprite.Sprite):
     
     def update_rect(self):
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
-        self.rect.y = self.jeu.taille_case*self.y
+        self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
         
     def avance(self):
         if(self.actif):
@@ -538,12 +622,19 @@ class Fantome(pygame.sprite.Sprite):
         if(not self.appeure):
             if(pygame.sprite.collide_mask(self, self.jeu.pac)!=None):
                 self.jeu.running = 0
+                self.jeu.pac.vies -= 1
+                self.jeu.pac.animation_mort()
         else:
             if(pygame.sprite.collide_mask(self, self.jeu.pac)!=None):
                 self.kill()
                 self.actif = 0
                 self.appeure = 0
                 self.animation_appeure = 0
+                score = 200
+                for fantome in self.jeu.fantomes.sprites():
+                    if(fantome.appeure==0):
+                        score *= 2
+                self.jeu.score += score
                 if(self == self.jeu.rouge):
                     self.x = 10
                     self.y = 11
@@ -571,7 +662,7 @@ class Pastille(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(pygame.image.load("images/Pacman/pastille.png"),(self.jeu.taille_case,self.jeu.taille_case))
         self.rect = self.image.get_rect()
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
-        self.rect.y = self.jeu.taille_case*self.y
+        self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
     
 class Bonus(pygame.sprite.Sprite):
     
@@ -583,25 +674,33 @@ class Bonus(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(pygame.image.load("images/Pacman/bonus.png"),(self.jeu.taille_case,self.jeu.taille_case))
         self.rect = self.image.get_rect()
         self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
-        self.rect.y = self.jeu.taille_case*self.y
+        self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
         
     
 jeu = PacmanJeu()
-
-while(jeu.running):
-    
-    jeu.resolution_events()
-    
-    jeu.affiche()
-    
-    jeu.update_animations()
-    
-    jeu.avance()
-    
-    jeu.check_win()
-    
-    clock.tick(60)
-    pygame.display.flip()
+while(jeu.pac.vies!=0):
+    while(jeu.running):
+        
+        jeu.resolution_events()
+        
+        jeu.affiche()
+        
+        jeu.update_animations()
+        
+        jeu.avance()
+        
+        jeu.check_win()
+        
+        clock.tick(60)
+        pygame.display.flip()
+    if(len(jeu.pastilles.sprites())==0):
+        jeu.animation_win()
+        jeu.nouveau_niveau()
+    elif(jeu.pac.vies!=0):
+        jeu.suite_manche()
+        
+jeu.game_over()
+pygame.time.delay(5000)
     
 pygame.quit()
     
