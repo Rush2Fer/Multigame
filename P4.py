@@ -62,7 +62,8 @@ score_color = blue
 class P4Jeu:
 
     def main(self):
-        global menu_flag
+        global menu_flag, screen
+        screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
         self.init_menu()
 
         # loop
@@ -131,7 +132,7 @@ class P4Jeu:
 
     def init_screen(self):
         global font, i, z, cl, cpt
-
+        
         cpt = 0
         i = 1
         z = 5

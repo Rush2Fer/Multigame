@@ -102,12 +102,12 @@ class PacmanJeu:
         super().__init__()
         pygame.display.set_caption("Multigame")
         pygame.display.set_icon(pygame.image.load("images/icon.png"))
-        self.screen = pygame.display.set_mode((900,600),pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((900,600))
         self.running = 1
         self.events = []
         self.taille_case = int(self.screen.get_height()/(NB_LIGNES+2))
         self.decalage_x_map = int(self.screen.get_width()/2 - self.taille_case*9.5)
-        self.decalage_y_map = self.taille_case
+        self.decalage_y_map = int(self.taille_case/2)
         self.time_last_animation = 0
         self.score = 0
         self.murs = pygame.sprite.Group()
@@ -200,7 +200,7 @@ class PacmanJeu:
         
     def affiche_score(self):
         img = self.font.render('score : {}'.format(self.score), True, pygame.Color('white'))
-        self.screen.blit(img, (self.decalage_x_map, 1))
+        self.screen.blit(img, (self.decalage_x_map+5*self.taille_case, self.decalage_y_map+NB_LIGNES*self.taille_case+1))
         
     def affiche_vies(self):
         for vie in range(self.pac.vies):

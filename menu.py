@@ -13,8 +13,8 @@ class Menu:
         pygame.display.set_caption("Multigame")
         pygame.display.set_icon(pygame.image.load("images/icon.png"))
         self.screen = pygame.display.set_mode((900,600))
-        self.font_titre = pygame.font.Font("neo_latina.ttf", 100)
-        self.font = pygame.font.Font("neo_latina.ttf", 30)
+        self.font_titre = pygame.font.Font("SparTakus.ttf", 75)
+        self.font = pygame.font.Font("SparTakus.ttf", 20)
         self.events = []
         self.running = 1
         self.jeux = pygame.sprite.Group()
@@ -40,11 +40,11 @@ class Menu:
     def affiche(self):
         self.screen.fill(pygame.Color(50,150,200))
         titre = self.font_titre.render('Multigames', True, pygame.Color('white'))
-        self.screen.blit(titre, (int(self.screen.get_width()/2 - titre.get_width()/2),int(self.screen.get_width()*0.01)))
+        self.screen.blit(titre, (int(self.screen.get_width()/2 - titre.get_width()/2),int(self.screen.get_width()*0.05)))
         self.jeux.draw(self.screen)
         for jeu in self.jeux.sprites():
             img_txt = self.font.render(jeu.titre, True, pygame.Color('white'))
-            self.screen.blit(img_txt,(jeu.rect.bottomleft[0]+jeu.rect.w/2-img_txt.get_width()/2,jeu.rect.bottomleft[1]))
+            self.screen.blit(img_txt,(jeu.rect.bottomleft[0]+jeu.rect.w/2-img_txt.get_width()/2,jeu.rect.bottomleft[1]+int(self.screen.get_width()*0.02)))
         self.screen.blit(pygame.transform.scale(pygame.image.load("images/icon_coming_soon.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15))), (int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.65)))
     
     def choix_jeu(self):
@@ -65,6 +65,7 @@ class Menu:
             if(jeu!=None):
                 jeu.main()
                 jeu = None
+                self.screen = pygame.display.set_mode((900,600))
             
             clock.tick(60)
             pygame.display.flip()

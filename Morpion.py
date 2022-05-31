@@ -54,7 +54,8 @@ score_color = blue
 class MorpionJeu:
 
     def main(self):
-        global menu_flag
+        global menu_flag, screen
+        screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
         self.init_menu()
 
         # loop
@@ -146,7 +147,7 @@ class MorpionJeu:
         if pygame.mouse.get_pressed() == (1, 0, 0):
             pos_c = pygame.mouse.get_pos()[0]
             pos_l = pygame.mouse.get_pos()[1]
-            print("press {} {}".format(pos_c, pos_l))
+            # print("press {} {}".format(pos_c, pos_l))
             for c in range(1, 4):
                 if (pos_c > ((c - 1) * screen_size_x / 3)) and (pos_c < (c * screen_size_x / 3)):
                     for l in range(1, 4):
@@ -171,12 +172,12 @@ class MorpionJeu:
         bord_size_x = -screen_size_x / 12
         bord_size_y = -screen_size_y / 20
         if joueur == 1:
-            print('pion J1 - colonne {} - ligne {}'.format(colonne, ligne))
+            # print('pion J1 - colonne {} - ligne {}'.format(colonne, ligne))
             jeton = jeton_j1
             if cl[ligne - 1][colonne - 1] == 0:
                 cl[ligne - 1][colonne - 1] = joueur
         elif joueur == -1:
-            print('pion J2 - colonne {} - ligne {}'.format(colonne, ligne))
+            # print('pion J2 - colonne {} - ligne {}'.format(colonne, ligne))
             jeton = jeton_j2
             bord_size_x = screen_size_x / 40
             bord_size_y = screen_size_y / 40

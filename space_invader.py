@@ -19,7 +19,7 @@ class Game:
 
         #health et score
         self.lives = 3
-        self.live_surf =pygame.image.load('./player2.png').convert_alpha()
+        self.live_surf =pygame.image.load('images/SpaceInvaders/player2.png').convert_alpha()
         self.live_surf = pygame.transform.scale(self.live_surf, (self.screen_width*0.075, self.screen_height*0.06))
         self.live_x_start_pos = self.screen_width-(self.live_surf.get_size()[0] * 2 +20)
         self.score = 0
@@ -64,10 +64,10 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == ALIENLASER:
-                    game.alien_shoot()
+                    self.alien_shoot()
 
             self.screen.fill((0, 0, 0))
-            game.run()
+            self.run()
 
             pygame.display.flip()
             clock.tick(60)
@@ -104,14 +104,14 @@ class Game:
         for alien in all_aliens:
             if alien.rect.right > self.screen_width:
                 self.aliens_direction *= -1
-                #self.aliens_direction += -0.5
-                print(self.aliens_direction)
+                # self.aliens_direction += -0.5
+                # print(self.aliens_direction)
                 self.alien_move_down(7)
                 break
             elif alien.rect.left <= 0:
                 self.aliens_direction *= -1
-                #self.aliens_direction += 0.5
-                print(self.aliens_direction)
+                # self.aliens_direction += 0.5
+                # print(self.aliens_direction)
                 self.alien_move_down(7)
                 break
 

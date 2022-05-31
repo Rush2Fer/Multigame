@@ -65,9 +65,7 @@ class SnakeJeu():
         global SnakeG
         pygame.init()
         pygame.display.set_caption('SNAKE MULTIGAME')
-        screen = pygame.display.set_mode(
-            (pygame.display.get_desktop_sizes()[0][0] - 100, pygame.display.get_desktop_sizes()[0][1] - 100),
-            pygame.RESIZABLE)
+        screen = pygame.display.set_mode((900,600,),pygame.RESIZABLE)
         offset = 64
         clock = pygame.time.Clock()
         jeu = Jeu()
