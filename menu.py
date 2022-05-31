@@ -3,7 +3,7 @@ pygame.init()
 clock = pygame.time.Clock()
 from pacman import PacmanJeu as Pacman
 from pacman import PacmanJeu as Snake
-from pacman import PacmanJeu as SpaceInvader
+from space_invader import Game as SpaceInvader
 from p4 import P4Jeu as Puissance4
 from morpion import MorpionJeu as Morpion
 
@@ -22,7 +22,7 @@ class Menu:
         
     def init_jeux(self):
         self.jeux.add(Jeu(Pacman,"Pacman",int(self.screen.get_width()*0.143),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_pacman.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
-        self.jeux.add(Jeu(Pacman,"Space Invader",int(self.screen.get_width()*0.428),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_space_invader.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
+        self.jeux.add(Jeu(SpaceInvader,"Space Invader",int(self.screen.get_width()*0.428),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_space_invader.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
         self.jeux.add(Jeu(Pacman,"Snake",int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_snake.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
         self.jeux.add(Jeu(Puissance4,"Puissance 4",int(self.screen.get_width()*0.143),int(self.screen.get_height()*0.65),pygame.transform.scale(pygame.image.load("images/icon_puissance4.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
         self.jeux.add(Jeu(Morpion,"Morpion",int(self.screen.get_width()*0.428),int(self.screen.get_height()*0.65),pygame.transform.scale(pygame.image.load("images/icon_morpion.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
