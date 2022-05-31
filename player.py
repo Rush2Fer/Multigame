@@ -9,7 +9,7 @@ screen_height = 600
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, constraint, speed):
         super().__init__()
-        self.image = pygame.image.load('./player2.png').convert_alpha()
+        self.image = pygame.image.load('images/SpaceInvaders/player2.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (screen_width*0.1, screen_height*0.07))
         self.rect = self.image.get_rect(midbottom=pos)
         self.speed = speed

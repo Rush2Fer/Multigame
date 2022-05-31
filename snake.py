@@ -223,7 +223,3 @@ class SnakeJeu():
             self.real_pos_snake()
             clock.tick(DIFFICULTY)
             pygame.display.flip()
-
-
-a = SnakeJeu()
-a.main()

@@ -9,7 +9,7 @@ screen_height = 600
 class Alien(pygame.sprite.Sprite):
     def __init__(self, color, x, y):
         super().__init__()
-        file_path = './' + color + '.png'
+        file_path = 'images/SpaceInvaders/' + color + '.png'
         self.image = pygame.image.load(file_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (screen_width * 0.075, screen_width * 0.075))
         self.rect = self.image.get_rect(topleft=(x, y))
@@ -24,7 +24,7 @@ class Alien(pygame.sprite.Sprite):
 class Extra(pygame.sprite.Sprite):
     def __init__(self, side):
         super().__init__()
-        self.image = pygame.image.load('./extra.png').convert_alpha()
+        self.image = pygame.image.load('images/SpaceInvaders/extra.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (screen_width * 0.1, screen_width * 0.05))
 
         if side == 'right':
