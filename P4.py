@@ -7,7 +7,7 @@ menu_flag = True
 partie_flag = True
 fin_partie_flag = True
 
-screen_size_x = 750
+screen_size_x = 600
 screen_size_y = screen_size_x * (1498 / 1730)
 score_size = 100
 screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
@@ -77,11 +77,10 @@ class P4Jeu:
                 pos_x = pygame.mouse.get_pos()[0]
                 pos_y = pygame.mouse.get_pos()[1]
                 if (pos_x > buton_multi_xi) and (pos_x < (buton_multi_xi + buton_multi_xl)) and (pos_y > buton_multi_yi) and (pos_y < (buton_multi_yi + buton_multi_yl)):
-                    pygame.time.delay(500)
+                    pygame.time.delay(100)
                     self.multijoueur()
 
         # Done! Time to quit.
-        pygame.quit()
 
 
     def multijoueur(self):
@@ -111,6 +110,12 @@ class P4Jeu:
 
 
     def init_menu(self):
+        global menu_flag
+        global partie_flag
+        global fin_partie_flag
+        menu_flag = True
+        partie_flag = True
+        fin_partie_flag = True
         global font
         # Fill the background
         screen.fill(blue)
@@ -151,7 +156,7 @@ class P4Jeu:
             pos = pygame.mouse.get_pos()[0]
             for c in range(1, 8):
                 if (pos > ((c - 1) * screen_size_x / 7)) and (pos < (c * screen_size_x / 7)):
-                    pygame.time.delay(500)
+                    pygame.time.delay(100)
                     if cl[0][c - 1] != 1 and cl[0][c - 1] != -1:
                         return c
         return 0
@@ -298,12 +303,10 @@ class P4Jeu:
                 pos_x = pygame.mouse.get_pos()[0]
                 pos_y = pygame.mouse.get_pos()[1]
                 if (pos_x > buton_rejouer_xi) and (pos_x < (buton_rejouer_xi + buton_rejouer_xl)) and (pos_y > buton_rejouer_yi) and (pos_y < (buton_rejouer_yi + buton_rejouer_yl)):
-                    pygame.time.delay(500)
+                    pygame.time.delay(100)
                     self.multijoueur()
                 elif (pos_x > buton_menu_xi) and (pos_x < (buton_menu_xi + buton_menu_xl)) and (pos_y > buton_menu_yi) and (pos_y < (buton_menu_yi + buton_menu_yl)):
-                    pygame.time.delay(500)
-                    self.main()
-
-
-jeu = P4Jeu()
-jeu.main()
+                    pygame.time.delay(100)
+                    partie_flag = 0
+                    fin_partie_flag = 0
+                    menu_flag = 0
