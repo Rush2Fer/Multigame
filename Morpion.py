@@ -51,231 +51,231 @@ pink_fade = (170, 50, 100)
 score_color = blue
 
 
-def menu():
-    global menu_flag
-    init_menu()
+class MorpionJeu:
 
-    # loop
-    while menu_flag:
+    def main(self):
+        global menu_flag
+        self.init_menu()
 
-        # Did the user click the window close button?
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                menu_flag = False
+        # loop
+        while menu_flag:
 
-        if pygame.mouse.get_pressed() == (1, 0, 0):
-            pos_x = pygame.mouse.get_pos()[0]
-            pos_y = pygame.mouse.get_pos()[1]
-            if (pos_x > buton_multi_xi) and (pos_x < (buton_multi_xi + buton_multi_xl)) and (
-                    pos_y > buton_multi_yi) and (pos_y < (buton_multi_yi + buton_multi_yl)):
-                pygame.time.delay(500)
-                multijoueur()
+            # Did the user click the window close button?
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    menu_flag = False
 
-    # Done! Time to quit.
-    pygame.quit()
+            if pygame.mouse.get_pressed() == (1, 0, 0):
+                pos_x = pygame.mouse.get_pos()[0]
+                pos_y = pygame.mouse.get_pos()[1]
+                if (pos_x > buton_multi_xi) and (pos_x < (buton_multi_xi + buton_multi_xl)) and (
+                        pos_y > buton_multi_yi) and (pos_y < (buton_multi_yi + buton_multi_yl)):
+                    pygame.time.delay(500)
+                    self.multijoueur()
+
+        # Done! Time to quit.
+        pygame.quit()
 
 
-def multijoueur():
-    global menu_flag, partie_flag
-    init_screen()
+    def multijoueur(self):
+        global menu_flag, partie_flag
+        self.init_screen()
 
-    # loop
-    while partie_flag:
+        # loop
+        while partie_flag:
 
-        # Did the user click the window close button?
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                partie_flag = False
-                menu_flag = False
+            # Did the user click the window close button?
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    partie_flag = False
+                    menu_flag = False
 
-        global i, cpt
-        affiche_joueur(i)
-        colonne, ligne = detect_pos()
-        if (colonne != 0) & (ligne != 0):
-            placer_pion(i, colonne, ligne)
-            trouver_gagnant(i)
-            i = i * -1
-            cpt += 1
+            global i, cpt
+            self.affiche_joueur(i)
+            colonne, ligne = self.detect_pos()
+            if (colonne != 0) & (ligne != 0):
+                self.placer_pion(i, colonne, ligne)
+                self.trouver_gagnant(i)
+                i = i * -1
+                cpt += 1
+            pygame.display.flip()
+            if cpt == 9:
+                self.afficher_gagnant(0)
+
+
+    def init_menu(self):
+        global font
+        # Fill the background
+        screen.fill(blue)
+        font = pygame.font.SysFont(None, text_menu)
+        screen.blit(morpion_logo, morpion_logo.get_rect(center=(screen_size_x / 2, screen_size_y * 0.2)))
+        pygame.draw.rect(screen, pink_fade, (buton_multi_xi, buton_multi_yi, buton_multi_xl, buton_multi_yl))
+        pygame.draw.rect(screen, pink, (buton_multi_xi, buton_multi_yi, buton_multi_xl, buton_multi_yl), 5)
+        title = font.render('2 JOUEURS', True, pink)
+        screen.blit(title, title.get_rect(center=(screen_size_x / 2, buton_multi_yi + buton_multi_yl / 2)))
+
         pygame.display.flip()
-        if cpt == 9:
-            afficher_gagnant(0)
 
 
-def init_menu():
-    global font
-    # Fill the background
-    screen.fill(blue)
-    font = pygame.font.SysFont(None, text_menu)
-    screen.blit(morpion_logo, morpion_logo.get_rect(center=(screen_size_x / 2, screen_size_y * 0.2)))
-    pygame.draw.rect(screen, pink_fade, (buton_multi_xi, buton_multi_yi, buton_multi_xl, buton_multi_yl))
-    pygame.draw.rect(screen, pink, (buton_multi_xi, buton_multi_yi, buton_multi_xl, buton_multi_yl), 5)
-    title = font.render('2 JOUEURS', True, pink)
-    screen.blit(title, title.get_rect(center=(screen_size_x / 2, buton_multi_yi + buton_multi_yl / 2)))
+    def init_screen(self):
+        global font, i, z, cl, cpt
 
-    pygame.display.flip()
+        cpt = 0
+        i = 1
+        z = 5
+        cl = [[0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0]]
 
-
-def init_screen():
-    global font, i, z, cl, cpt
-
-    cpt = 0
-    i = 1
-    z = 5
-    cl = [[0, 0, 0],
-          [0, 0, 0],
-          [0, 0, 0]]
-
-    # Fill the background
-    font = pygame.font.SysFont(None, text_size)
-    screen.fill(white)
-    pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
-    for z in range(1, 3):
-        pygame.draw.line(screen, black, (0, z * (screen_size_y / 3)), (screen_size_x, z * (screen_size_y / 3)), 5)
-        pygame.draw.line(screen, black, (z * (screen_size_x / 3), 0), (z * (screen_size_x / 3), screen_size_y), 5)
-    pygame.display.flip()
+        # Fill the background
+        font = pygame.font.SysFont(None, text_size)
+        screen.fill(white)
+        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        for z in range(1, 3):
+            pygame.draw.line(screen, black, (0, z * (screen_size_y / 3)), (screen_size_x, z * (screen_size_y / 3)), 5)
+            pygame.draw.line(screen, black, (z * (screen_size_x / 3), 0), (z * (screen_size_x / 3), screen_size_y), 5)
+        pygame.display.flip()
 
 
-def detect_pos():
-    if pygame.mouse.get_pressed() == (1, 0, 0):
-        pos_c = pygame.mouse.get_pos()[0]
-        pos_l = pygame.mouse.get_pos()[1]
-        print("press {} {}".format(pos_c, pos_l))
-        for c in range(1, 4):
-            if (pos_c > ((c - 1) * screen_size_x / 3)) and (pos_c < (c * screen_size_x / 3)):
-                for l in range(1, 4):
-                    if (pos_l > ((l - 1) * screen_size_x / 3)) and (pos_l < (l * screen_size_x / 3)):
-                        if cl[l - 1][c - 1] != 1 and cl[l - 1][c - 1] != -1:
-                            return c, l
-    return 0, 0
-
-
-def affiche_joueur(joueur):
-    global text
-    pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
-    if joueur == 1:
-        text = font.render('Tour de : {}'.format(Nom_J1), True, white)
-    elif joueur == -1:
-        text = font.render('Tour de : {}'.format(Nom_J2), True, white)
-    screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y + (score_size / 2))))
-
-
-def placer_pion(joueur, colonne, ligne):
-    global z, jeton
-    bord_size_x = -screen_size_x / 12
-    bord_size_y = -screen_size_y / 20
-    if joueur == 1:
-        print('pion J1 - colonne {} - ligne {}'.format(colonne, ligne))
-        jeton = jeton_j1
-        if cl[ligne - 1][colonne - 1] == 0:
-            cl[ligne - 1][colonne - 1] = joueur
-    elif joueur == -1:
-        print('pion J2 - colonne {} - ligne {}'.format(colonne, ligne))
-        jeton = jeton_j2
-        bord_size_x = screen_size_x / 40
-        bord_size_y = screen_size_y / 40
-        if cl[ligne - 1][colonne - 1] == 0:
-            cl[ligne - 1][colonne - 1] = joueur
-
-    pos_jeton_x = (bord_size_x + (colonne - 1) * colonne_size)
-    pos_jeton_y = (bord_size_y + (ligne - 1) * line_size)
-    screen.blit(jeton, (pos_jeton_x, pos_jeton_y))
-
-
-def test_suite(px, py, joueur):
-    global nb
-    if cl[px][py] == joueur:
-        nb += 1
-        if nb == 3:
-            afficher_gagnant(joueur)
-            return
-    else:
-        nb = 0
-
-
-def trouver_gagnant(joueur):
-    global nb
-    nb = 0
-
-    # recherche colonne
-    for C in range(0, 3):
-        for L in range(0, 3):
-            test_suite(L, C, joueur)
-        nb = 0
-
-    # recherche ligne
-    for L in range(0, 3):
-        for C in range(0, 3):
-            test_suite(L, C, joueur)
-        nb = 0
-
-    # recherche diagonale
-    # diagonale SUD-EST
-    for D in range(0, 3):
-        test_suite(D, D, joueur)
-    nb = 0
-
-    # diagonale SUD-OUEST
-    for D in range(0, 3):
-        test_suite(D, 2 - D, joueur)
-    nb = 0
-
-
-def afficher_gagnant(joueur):
-    global font, text
-
-    font = pygame.font.SysFont(None, text_gagnant)
-    pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
-
-    if joueur == 1:
-        text = font.render('Gagnant : {}'.format(Nom_J1), True, black)
-    elif joueur == -1:
-        text = font.render('Gagnant : {}'.format(Nom_J2), True, black)
-    elif joueur == 0:
-        text = font.render('Pas de gagnant', True, black)
-
-    screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y / 2)))
-
-    pygame.draw.rect(screen, pink_fade, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl))
-    pygame.draw.rect(screen, pink, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl), 5)
-    title = font.render('REJOUER', True, pink)
-    screen.blit(title, title.get_rect(
-        center=(buton_rejouer_xi + buton_rejouer_xl / 2, buton_rejouer_yi + buton_rejouer_yl / 2)))
-
-    pygame.draw.rect(screen, pink_fade, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl))
-    pygame.draw.rect(screen, pink, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl), 5)
-    title = font.render('MENU', True, pink)
-    screen.blit(title, title.get_rect(center=(buton_menu_xi + buton_menu_xl / 2, buton_menu_yi + buton_menu_yl / 2)))
-
-    pygame.display.flip()
-    fin_partie()
-
-
-def fin_partie():
-    global menu_flag, partie_flag, fin_partie_flag
-
-    # loop
-    while fin_partie_flag:
-
-        # Did the user click the window close button?
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                fin_partie_flag = False
-                partie_flag = False
-                menu_flag = False
-
+    def detect_pos(self):
         if pygame.mouse.get_pressed() == (1, 0, 0):
-            pos_x = pygame.mouse.get_pos()[0]
-            pos_y = pygame.mouse.get_pos()[1]
-            if (pos_x > buton_rejouer_xi) and (pos_x < (buton_rejouer_xi + buton_rejouer_xl)) and (
-                    pos_y > buton_rejouer_yi) and (pos_y < (buton_rejouer_yi + buton_rejouer_yl)):
-                pygame.time.delay(500)
-                multijoueur()
-            elif (pos_x > buton_menu_xi) and (pos_x < (buton_menu_xi + buton_menu_xl)) and (pos_y > buton_menu_yi) and (
-                    pos_y < (buton_menu_yi + buton_menu_yl)):
-                pygame.time.delay(500)
-                menu()
+            pos_c = pygame.mouse.get_pos()[0]
+            pos_l = pygame.mouse.get_pos()[1]
+            print("press {} {}".format(pos_c, pos_l))
+            for c in range(1, 4):
+                if (pos_c > ((c - 1) * screen_size_x / 3)) and (pos_c < (c * screen_size_x / 3)):
+                    for l in range(1, 4):
+                        if (pos_l > ((l - 1) * screen_size_x / 3)) and (pos_l < (l * screen_size_x / 3)):
+                            if cl[l - 1][c - 1] != 1 and cl[l - 1][c - 1] != -1:
+                                return c, l
+        return 0, 0
 
 
-# loop
-while 1:
-    menu()
+    def affiche_joueur(self, joueur):
+        global text
+        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        if joueur == 1:
+            text = font.render('Tour de : {}'.format(Nom_J1), True, white)
+        elif joueur == -1:
+            text = font.render('Tour de : {}'.format(Nom_J2), True, white)
+        screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y + (score_size / 2))))
+
+
+    def placer_pion(self, joueur, colonne, ligne):
+        global z, jeton
+        bord_size_x = -screen_size_x / 12
+        bord_size_y = -screen_size_y / 20
+        if joueur == 1:
+            print('pion J1 - colonne {} - ligne {}'.format(colonne, ligne))
+            jeton = jeton_j1
+            if cl[ligne - 1][colonne - 1] == 0:
+                cl[ligne - 1][colonne - 1] = joueur
+        elif joueur == -1:
+            print('pion J2 - colonne {} - ligne {}'.format(colonne, ligne))
+            jeton = jeton_j2
+            bord_size_x = screen_size_x / 40
+            bord_size_y = screen_size_y / 40
+            if cl[ligne - 1][colonne - 1] == 0:
+                cl[ligne - 1][colonne - 1] = joueur
+
+        pos_jeton_x = (bord_size_x + (colonne - 1) * colonne_size)
+        pos_jeton_y = (bord_size_y + (ligne - 1) * line_size)
+        screen.blit(jeton, (pos_jeton_x, pos_jeton_y))
+
+
+    def test_suite(self, px, py, joueur):
+        global nb
+        if cl[px][py] == joueur:
+            nb += 1
+            if nb == 3:
+                self.afficher_gagnant(joueur)
+                return
+        else:
+            nb = 0
+
+
+    def trouver_gagnant(self, joueur):
+        global nb
+        nb = 0
+
+        # recherche colonne
+        for C in range(0, 3):
+            for L in range(0, 3):
+                self.test_suite(L, C, joueur)
+            nb = 0
+
+        # recherche ligne
+        for L in range(0, 3):
+            for C in range(0, 3):
+                self.test_suite(L, C, joueur)
+            nb = 0
+
+        # recherche diagonale
+        # diagonale SUD-EST
+        for D in range(0, 3):
+            self.test_suite(D, D, joueur)
+        nb = 0
+
+        # diagonale SUD-OUEST
+        for D in range(0, 3):
+            self.test_suite(D, 2 - D, joueur)
+        nb = 0
+
+
+    def afficher_gagnant(self, joueur):
+        global font, text
+
+        font = pygame.font.SysFont(None, text_gagnant)
+        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+
+        if joueur == 1:
+            text = font.render('Gagnant : {}'.format(Nom_J1), True, black)
+        elif joueur == -1:
+            text = font.render('Gagnant : {}'.format(Nom_J2), True, black)
+        elif joueur == 0:
+            text = font.render('Pas de gagnant', True, black)
+
+        screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y / 2)))
+
+        pygame.draw.rect(screen, pink_fade, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl))
+        pygame.draw.rect(screen, pink, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl), 5)
+        title = font.render('REJOUER', True, pink)
+        screen.blit(title, title.get_rect(
+            center=(buton_rejouer_xi + buton_rejouer_xl / 2, buton_rejouer_yi + buton_rejouer_yl / 2)))
+
+        pygame.draw.rect(screen, pink_fade, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl))
+        pygame.draw.rect(screen, pink, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl), 5)
+        title = font.render('MENU', True, pink)
+        screen.blit(title, title.get_rect(center=(buton_menu_xi + buton_menu_xl / 2, buton_menu_yi + buton_menu_yl / 2)))
+
+        pygame.display.flip()
+        self.fin_partie()
+
+
+    def fin_partie(self):
+        global menu_flag, partie_flag, fin_partie_flag
+
+        # loop
+        while fin_partie_flag:
+
+            # Did the user click the window close button?
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    fin_partie_flag = False
+                    partie_flag = False
+                    menu_flag = False
+
+            if pygame.mouse.get_pressed() == (1, 0, 0):
+                pos_x = pygame.mouse.get_pos()[0]
+                pos_y = pygame.mouse.get_pos()[1]
+                if (pos_x > buton_rejouer_xi) and (pos_x < (buton_rejouer_xi + buton_rejouer_xl)) and (
+                        pos_y > buton_rejouer_yi) and (pos_y < (buton_rejouer_yi + buton_rejouer_yl)):
+                    pygame.time.delay(500)
+                    self.multijoueur()
+                elif (pos_x > buton_menu_xi) and (pos_x < (buton_menu_xi + buton_menu_xl)) and (pos_y > buton_menu_yi) and (
+                        pos_y < (buton_menu_yi + buton_menu_yl)):
+                    pygame.time.delay(500)
+                    self.main()
+
+jeu = MorpionJeu()
+jeu.main()
