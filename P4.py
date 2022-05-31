@@ -42,13 +42,13 @@ font = pygame.font.SysFont(None, text_size)
 
 jeton_size = screen_size_x / 8.5
 
-p4_logo = pygame.image.load('P4 logo.png')
+p4_logo = pygame.image.load('images/P4/P4 logo.png')
 p4_logo = pygame.transform.scale(p4_logo, (screen_size_x * 0.8, screen_size_y * 0.25))
-p4_grille = pygame.image.load('Board.png')
+p4_grille = pygame.image.load('images/P4/Board.png')
 p4_grille = pygame.transform.scale(p4_grille, (screen_size_x, screen_size_y))
-jeton_j1 = pygame.image.load('Red.png')
+jeton_j1 = pygame.image.load('images/P4/Red.png')
 jeton_j1 = pygame.transform.scale(jeton_j1, (jeton_size, jeton_size))
-jeton_j2 = pygame.image.load('Yellow.png')
+jeton_j2 = pygame.image.load('images/P4/Yellow.png')
 jeton_j2 = pygame.transform.scale(jeton_j2, (jeton_size, jeton_size))
 
 black = (0, 0, 0)
