@@ -13,18 +13,19 @@ class Menu:
         pygame.display.set_caption("Multigame")
         pygame.display.set_icon(pygame.image.load("images/icon.png"))
         self.screen = pygame.display.set_mode((900,600))
-        self.font = pygame.font.SysFont(None, int(self.screen.get_height()/5))
+        self.font_titre = pygame.font.Font("neo_latina.ttf", 100)
+        self.font = pygame.font.Font("neo_latina.ttf", 30)
         self.events = []
         self.running = 1
         self.jeux = pygame.sprite.Group()
         self.init_jeux()
         
     def init_jeux(self):
-        self.jeux.add(Jeu(Pacman,3*int(self.screen.get_width()*0.09),2*int(self.screen.get_width()*0.09),pygame.transform.scale(pygame.image.load("images/icon_pacman.png"), (int(self.screen.get_width()*0.09),int(self.screen.get_width()*0.09)))))
-        self.jeux.add(Jeu(Pacman,5*int(self.screen.get_width()*0.09),2*int(self.screen.get_width()*0.09),pygame.transform.scale(pygame.image.load("images/icon_space_invader.png"), (int(self.screen.get_width()*0.09),int(self.screen.get_width()*0.09)))))
-        self.jeux.add(Jeu(Pacman,7*int(self.screen.get_width()*0.09),2*int(self.screen.get_width()*0.09),pygame.transform.scale(pygame.image.load("images/icon_snake.png"), (int(self.screen.get_width()*0.09),int(self.screen.get_width()*0.09)))))
-        self.jeux.add(Jeu(Pacman,3*int(self.screen.get_width()*0.09),4*int(self.screen.get_width()*0.09),pygame.transform.scale(pygame.image.load("images/icon_puissance4.png"), (int(self.screen.get_width()*0.09),int(self.screen.get_width()*0.09)))))
-        self.jeux.add(Jeu(Pacman,5*int(self.screen.get_width()*0.09),4*int(self.screen.get_width()*0.09),pygame.transform.scale(pygame.image.load("images/icon_morpion.png"), (int(self.screen.get_width()*0.09),int(self.screen.get_width()*0.09)))))
+        self.jeux.add(Jeu(Pacman,"Pacman",int(self.screen.get_width()*0.143),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_pacman.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
+        self.jeux.add(Jeu(Pacman,"Space Invader",int(self.screen.get_width()*0.428),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_space_invader.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
+        self.jeux.add(Jeu(Pacman,"Snake",int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_snake.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
+        self.jeux.add(Jeu(Pacman,"Puissance 4",int(self.screen.get_width()*0.143),int(self.screen.get_height()*0.65),pygame.transform.scale(pygame.image.load("images/icon_puissance4.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
+        self.jeux.add(Jeu(Pacman,"Morpion",int(self.screen.get_width()*0.428),int(self.screen.get_height()*0.65),pygame.transform.scale(pygame.image.load("images/icon_morpion.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
     
     def resolution_events(self):
         self.events += pygame.event.get()
@@ -38,10 +39,13 @@ class Menu:
     
     def affiche(self):
         self.screen.fill(pygame.Color(50,150,200))
-        titre = self.font.render('Multigames', True, pygame.Color('white'))
-        self.screen.blit(titre, (2*int(self.screen.get_width()*0.09),0.5*int(self.screen.get_width()*0.09)))
+        titre = self.font_titre.render('Multigames', True, pygame.Color('white'))
+        self.screen.blit(titre, (int(self.screen.get_width()/2 - titre.get_width()/2),int(self.screen.get_width()*0.01)))
         self.jeux.draw(self.screen)
-        self.screen.blit(pygame.transform.scale(pygame.image.load("images/icon_coming_soon.png"), (int(self.screen.get_width()*0.09),int(self.screen.get_width()*0.09))), (7*int(self.screen.get_width()*0.09),4*int(self.screen.get_width()*0.09)))
+        for jeu in self.jeux.sprites():
+            img_txt = self.font.render(jeu.titre, True, pygame.Color('white'))
+            self.screen.blit(img_txt,(jeu.rect.bottomleft[0]+jeu.rect.w/2-img_txt.get_width()/2,jeu.rect.bottomleft[1]))
+        self.screen.blit(pygame.transform.scale(pygame.image.load("images/icon_coming_soon.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15))), (int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.65)))
     
     def choix_jeu(self):
         for jeu in self.jeux.sprites():
@@ -67,9 +71,10 @@ class Menu:
         
 class Jeu(pygame.sprite.Sprite):
     
-    def __init__(self, jeu, x, y, image):
+    def __init__(self, jeu, titre, x, y, image):
         super().__init__()
         self.jeu = jeu
+        self.titre = titre
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.x = x

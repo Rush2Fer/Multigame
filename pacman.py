@@ -102,7 +102,7 @@ class PacmanJeu:
         super().__init__()
         pygame.display.set_caption("Multigame")
         pygame.display.set_icon(pygame.image.load("images/icon.png"))
-        self.screen = pygame.display.set_mode((pygame.display.get_desktop_sizes()[0][0]-100,pygame.display.get_desktop_sizes()[0][1]-100),pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((900,600),pygame.RESIZABLE)
         self.running = 1
         self.events = []
         self.taille_case = int(self.screen.get_height()/(NB_LIGNES+2))
