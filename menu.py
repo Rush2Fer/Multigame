@@ -85,5 +85,5 @@ class Jeu(pygame.sprite.Sprite):
 class GTA:
     
     def main(self):
-        webbrowser.open_new_tab("https://youtube.com")
+        webbrowser.open_new_tab("https://www.youtube.com/watch?v=DLzxrzFCyOs")
         pygame.time.delay(1000)

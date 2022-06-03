@@ -49,6 +49,8 @@ class Game:
         self.color_dark = (100, 100, 100)
         #smallfont = pygame.font.SysFont('Corbel', 35)
         self.text = self.font.render('QUIT', True, (255,255,255))
+        
+        self.running = True
 
     def main(self):
 
@@ -58,11 +60,10 @@ class Game:
 
         ALIENLASER = pygame.USEREVENT + 1
         pygame.time.set_timer(ALIENLASER, 600)
-        while True:
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    self.running = False
                 if event.type == ALIENLASER:
                     self.alien_shoot()
 
