@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, webbrowser
 pygame.init()
 clock = pygame.time.Clock()
 from pacman import PacmanJeu as Pacman
@@ -26,6 +26,7 @@ class Menu:
         self.jeux.add(Jeu(Snake,"Snake",int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.28),pygame.transform.scale(pygame.image.load("images/icon_snake.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
         self.jeux.add(Jeu(Puissance4,"Puissance 4",int(self.screen.get_width()*0.143),int(self.screen.get_height()*0.65),pygame.transform.scale(pygame.image.load("images/icon_puissance4.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
         self.jeux.add(Jeu(Morpion,"Morpion",int(self.screen.get_width()*0.428),int(self.screen.get_height()*0.65),pygame.transform.scale(pygame.image.load("images/icon_morpion.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
+        self.jeux.add(Jeu(GTA,"GTA V",int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.65),pygame.transform.scale(pygame.image.load("images/icon_gtav.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15)))))
     
     def resolution_events(self):
         self.events += pygame.event.get()
@@ -45,7 +46,7 @@ class Menu:
         for jeu in self.jeux.sprites():
             img_txt = self.font.render(jeu.titre, True, pygame.Color('white'))
             self.screen.blit(img_txt,(jeu.rect.bottomleft[0]+jeu.rect.w/2-img_txt.get_width()/2,jeu.rect.bottomleft[1]+int(self.screen.get_width()*0.02)))
-        self.screen.blit(pygame.transform.scale(pygame.image.load("images/icon_coming_soon.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15))), (int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.65)))
+        # self.screen.blit(pygame.transform.scale(pygame.image.load("images/icon_coming_soon.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15))), (int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.65)))
     
     def choix_jeu(self):
         for jeu in self.jeux.sprites():
@@ -81,3 +82,8 @@ class Jeu(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         
+class GTA:
+    
+    def main(self):
+        webbrowser.open_new_tab("https://youtube.com")
+        pygame.time.delay(1000)
