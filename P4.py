@@ -2,11 +2,6 @@ import pygame
 
 pygame.init()
 
-
-menu_flag = True
-partie_flag = True
-fin_partie_flag = True
-
 screen_size_x = 600
 screen_size_y = screen_size_x * (1498 / 1730)
 score_size = 100
@@ -42,8 +37,6 @@ font = pygame.font.SysFont(None, text_size)
 
 jeton_size = screen_size_x / 8.5
 
-p4_logo = pygame.image.load('images/P4/P4 logo.png')
-p4_logo = pygame.transform.scale(p4_logo, (screen_size_x * 0.8, screen_size_y * 0.25))
 p4_grille = pygame.image.load('images/P4/Board.png')
 p4_grille = pygame.transform.scale(p4_grille, (screen_size_x, screen_size_y))
 jeton_j1 = pygame.image.load('images/P4/Red.png')
@@ -62,40 +55,15 @@ score_color = blue
 class P4Jeu:
 
     def main(self):
-        global menu_flag, screen
-        screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
-        self.init_menu()
-
-        # loop
-        while menu_flag:
-
-            # Did the user click the window close button?
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    menu_flag = False
-
-            if pygame.mouse.get_pressed() == (1, 0, 0):
-                pos_x = pygame.mouse.get_pos()[0]
-                pos_y = pygame.mouse.get_pos()[1]
-                if (pos_x > buton_multi_xi) and (pos_x < (buton_multi_xi + buton_multi_xl)) and (pos_y > buton_multi_yi) and (pos_y < (buton_multi_yi + buton_multi_yl)):
-                    pygame.time.delay(100)
-                    self.multijoueur()
-
-        # Done! Time to quit.
-
-
-    def multijoueur(self):
-        global menu_flag, partie_flag
         self.init_screen()
 
         # loop
-        while partie_flag:
+        while 1:
 
             # Did the user click the window close button?
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    partie_flag = False
-                    menu_flag = False
+                    pygame.quit()
 
             global i, cpt
             self.affiche_joueur(i)
@@ -110,29 +78,9 @@ class P4Jeu:
                 self.afficher_gagnant(0)
 
 
-    def init_menu(self):
-        global menu_flag
-        global partie_flag
-        global fin_partie_flag
-        menu_flag = True
-        partie_flag = True
-        fin_partie_flag = True
-        global font
-        # Fill the background
-        screen.fill(blue)
-        font = pygame.font.SysFont(None, text_menu)
-        screen.blit(p4_logo, p4_logo.get_rect(center=(screen_size_x / 2, screen_size_y * 0.2)))
-        pygame.draw.rect(screen, pink_fade, (buton_multi_xi, buton_multi_yi, buton_multi_xl, buton_multi_yl))
-        pygame.draw.rect(screen, pink, (buton_multi_xi, buton_multi_yi, buton_multi_xl, buton_multi_yl), 5)
-        title = font.render('2 JOUEURS', True, pink)
-        screen.blit(title, title.get_rect(center=(screen_size_x / 2, buton_multi_yi + buton_multi_yl/2)))
-
-        pygame.display.flip()
-
-
     def init_screen(self):
         global font, i, z, cl, cpt
-        
+
         cpt = 0
         i = 1
         z = 5
@@ -152,12 +100,11 @@ class P4Jeu:
 
 
     def detect_colon(self):
-        # Detect colon pressed
-        if pygame.mouse.get_pressed() == (1, 0, 0):
+        if pygame.mouse.get_pressed()[0]:
             pos = pygame.mouse.get_pos()[0]
             for c in range(1, 8):
                 if (pos > ((c - 1) * screen_size_x / 7)) and (pos < (c * screen_size_x / 7)):
-                    pygame.time.delay(100)
+                    pygame.time.delay(300)
                     if cl[0][c - 1] != 1 and cl[0][c - 1] != -1:
                         return c
         return 0
@@ -288,26 +235,25 @@ class P4Jeu:
 
 
     def fin_partie(self):
-        global menu_flag, partie_flag, fin_partie_flag
 
         # loop
-        while fin_partie_flag:
+        while 1:
 
             # Did the user click the window close button?
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    fin_partie_flag = False
-                    partie_flag = False
-                    menu_flag = False
+                    pygame.quit()
 
             if pygame.mouse.get_pressed() == (1, 0, 0):
                 pos_x = pygame.mouse.get_pos()[0]
                 pos_y = pygame.mouse.get_pos()[1]
                 if (pos_x > buton_rejouer_xi) and (pos_x < (buton_rejouer_xi + buton_rejouer_xl)) and (pos_y > buton_rejouer_yi) and (pos_y < (buton_rejouer_yi + buton_rejouer_yl)):
                     pygame.time.delay(100)
-                    self.multijoueur()
+                    self.main()
                 elif (pos_x > buton_menu_xi) and (pos_x < (buton_menu_xi + buton_menu_xl)) and (pos_y > buton_menu_yi) and (pos_y < (buton_menu_yi + buton_menu_yl)):
                     pygame.time.delay(100)
-                    partie_flag = 0
-                    fin_partie_flag = 0
-                    menu_flag = 0
+                    # menu general
+
+# a retirer
+jeu = P4Jeu()
+jeu.main()
