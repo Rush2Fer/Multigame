@@ -51,13 +51,6 @@ class Menu:
         for jeu in self.jeux.sprites():
             img_txt = self.font.render(jeu.titre, True, pygame.Color('white'))
             self.screen.blit(img_txt,(jeu.rect.bottomleft[0]+jeu.rect.w/2-img_txt.get_width()/2,jeu.rect.bottomleft[1]+int(self.screen.get_width()*0.02)))
-        # self.screen.blit(pygame.transform.scale(pygame.image.load("images/icon_coming_soon.png"), (int(self.screen.get_width()*0.15),int(self.screen.get_width()*0.15))), (int(self.screen.get_width()*0.714),int(self.screen.get_height()*0.65)))
-    
-    def choix_jeu(self):
-        for jeu in self.jeux.sprites():
-            if (jeu.rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]):
-                return jeu.jeu()
-        return None
     
     def main_menu(self):
         while(self.running):
