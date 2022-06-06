@@ -119,7 +119,7 @@ class PacmanJeu:
         self.nouveau_niveau()
     
     def main(self):
-        while(self.pac.vies!=0):
+        while(self.pac.vies>0):
             while(self.running):
                 
                 self.resolution_events()
@@ -137,11 +137,11 @@ class PacmanJeu:
             if(len(self.pastilles.sprites())==0):
                 self.animation_win()
                 self.nouveau_niveau()
-            elif(self.pac.vies!=0):
+            elif(self.pac.vies>0):
                 self.suite_manche()
                 
-        self.game_over()
-        pygame.time.delay(3000)
+        if(self.pac.vies==0):
+            self.game_over()
             
     
     def nouveau_niveau(self):
@@ -155,7 +155,7 @@ class PacmanJeu:
         self.pac.reset()
         self.affiche()
         img = self.font.render('Ready !', True, pygame.Color('yellow'))
-        self.screen.blit(img, (self.decalage_x_map+int(8.7*self.taille_case), 14*self.taille_case))
+        self.screen.blit(img, (self.decalage_x_map+int(8.7*self.taille_case), int(13.5*self.taille_case)))
         pygame.display.flip()
         pygame.time.delay(1000)
     
@@ -211,12 +211,12 @@ class PacmanJeu:
         self.events += pygame.event.get()
         for event in self.events:
             if (event.type == pygame.QUIT):
-                pygame.quit()
-                sys.exit()
+                self.running = 0
+                self.pac.vies = -1
             if (event.type == pygame.KEYDOWN):
                 if (event.key == pygame.K_ESCAPE):
-                    pygame.quit()
-                    sys.exit()
+                    self.running = 0
+                    self.pac.vies = -1
                 if (event.key == pygame.K_DOWN):
                     self.pac.direction_voulue = BAS
                 if (event.key == pygame.K_UP):
@@ -383,8 +383,9 @@ class PacmanJeu:
         self.pastilles.draw(self.screen)
         self.affiche_score()
         img = self.font.render('game over', True, pygame.Color('red'))
-        self.screen.blit(img, (self.decalage_x_map+8*self.taille_case, 14*self.taille_case))
+        self.screen.blit(img, (self.decalage_x_map+8*self.taille_case, int(13.5*self.taille_case)))
         pygame.display.flip()
+        pygame.time.delay(3000)
 
 class Mur(pygame.sprite.Sprite):
     
@@ -395,7 +396,8 @@ class Mur(pygame.sprite.Sprite):
         self.y = y
         self.image = self.get_image()
         self.rect = self.image.get_rect()
-        self.update_rect()
+        self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
+        self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
         
     def get_image(self, image_blanche = False):
         x=self.x
@@ -426,10 +428,6 @@ class Mur(pygame.sprite.Sprite):
                 return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+str(MURS[x][y+1])+str(MURS[x-1][y])+str(0)+".png"),(self.jeu.taille_case,self.jeu.taille_case))
             elif(y==NB_LIGNES-1):
                 return pygame.transform.scale(pygame.image.load(base_nom_image+str(MURS[x+1][y])+str(0)+str(MURS[x-1][y])+str(MURS[x][y-1])+".png"),(self.jeu.taille_case,self.jeu.taille_case))
-    
-    def update_rect(self):
-        self.rect.x = self.jeu.decalage_x_map + self.jeu.taille_case*self.x
-        self.rect.y = self.jeu.decalage_y_map + self.jeu.taille_case*self.y
     
 class Pacman(pygame.sprite.Sprite):
     
