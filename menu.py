@@ -4,8 +4,8 @@ clock = pygame.time.Clock()
 from pacman import PacmanJeu as Pacman
 from snake import SnakeJeu as Snake
 from space_invader import Game as SpaceInvader
-from p4 import P4Jeu as Puissance4
-from morpion import MorpionJeu as Morpion
+from P4 import P4Jeu as Puissance4
+from Morpion import MorpionJeu as Morpion
 
 class Menu:
     
@@ -18,6 +18,7 @@ class Menu:
         self.events = []
         self.running = 1
         self.jeux = pygame.sprite.Group()
+        self.jeu = None
         self.init_jeux()
         
     def init_jeux(self):
@@ -36,7 +37,11 @@ class Menu:
             if (event.type == pygame.KEYDOWN):
                 if (event.key == pygame.K_ESCAPE):
                     self.running = 0
-        self.event = []
+            if (event.type == pygame.MOUSEBUTTONUP and event.button == 1):
+                for jeu in self.jeux.sprites():
+                    if (jeu.rect.collidepoint(pygame.mouse.get_pos())):
+                        self.jeu = jeu.jeu()
+        self.events = []
     
     def affiche(self):
         self.screen.fill(pygame.Color(50,150,200))
@@ -55,17 +60,15 @@ class Menu:
         return None
     
     def main_menu(self):
-        jeu = None
         while(self.running):
             
             self.resolution_events()
             
             self.affiche()
             
-            jeu = self.choix_jeu()
-            if(jeu!=None):
-                jeu.main()
-                jeu = None
+            if(self.jeu!=None):
+                self.jeu.main()
+                self.jeu = None
                 self.screen = pygame.display.set_mode((900,600))
             
             clock.tick(60)

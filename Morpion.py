@@ -5,7 +5,7 @@ pygame.init()
 screen_size_x = 600
 screen_size_y = screen_size_x
 score_size = 100
-screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
+
 
 colonne_size = screen_size_x / 3
 line_size = screen_size_x / 3
@@ -46,16 +46,22 @@ score_color = blue
 
 
 class MorpionJeu:
+    
+    def __init__(self):
+        self.screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
+        self.running = 1
+        
 
     def main(self):
         self.init_screen()
+        pygame.event.clear()
 
         # loop
-        while 1:
+        while self.running:
             # Did the user click the window close button?
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    self.running = 0
 
             global i, cpt
             self.affiche_joueur(i)
@@ -68,7 +74,7 @@ class MorpionJeu:
             pygame.display.flip()
             if cpt == 9:
                 self.afficher_gagnant(0)
-
+        
 
     def init_screen(self):
         global font, i, z, cl, cpt
@@ -82,11 +88,11 @@ class MorpionJeu:
 
         # Fill the background
         font = pygame.font.SysFont(None, text_size)
-        screen.fill(white)
-        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        self.screen.fill(white)
+        pygame.draw.rect(self.screen, score_color, (0, screen_size_y, screen_size_x, score_size))
         for z in range(1, 3):
-            pygame.draw.line(screen, black, (0, z * (screen_size_y / 3)), (screen_size_x, z * (screen_size_y / 3)), 5)
-            pygame.draw.line(screen, black, (z * (screen_size_x / 3), 0), (z * (screen_size_x / 3), screen_size_y), 5)
+            pygame.draw.line(self.screen, black, (0, z * (screen_size_y / 3)), (screen_size_x, z * (screen_size_y / 3)), 5)
+            pygame.draw.line(self.screen, black, (z * (screen_size_x / 3), 0), (z * (screen_size_x / 3), screen_size_y), 5)
         pygame.display.flip()
 
 
@@ -105,12 +111,12 @@ class MorpionJeu:
 
     def affiche_joueur(self, joueur):
         global text
-        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        pygame.draw.rect(self.screen, score_color, (0, screen_size_y, screen_size_x, score_size))
         if joueur == 1:
             text = font.render('Tour de : {}'.format(Nom_J1), True, white)
         elif joueur == -1:
             text = font.render('Tour de : {}'.format(Nom_J2), True, white)
-        screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y + (score_size / 2))))
+        self.screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y + (score_size / 2))))
 
 
     def placer_pion(self, joueur, colonne, ligne):
@@ -118,12 +124,12 @@ class MorpionJeu:
         bord_size_x = -screen_size_x / 12
         bord_size_y = -screen_size_y / 20
         if joueur == 1:
-            print('pion J1 - colonne {} - ligne {}'.format(colonne, ligne))
+            # print('pion J1 - colonne {} - ligne {}'.format(colonne, ligne))
             jeton = jeton_j1
             if cl[ligne - 1][colonne - 1] == 0:
                 cl[ligne - 1][colonne - 1] = joueur
         elif joueur == -1:
-            print('pion J2 - colonne {} - ligne {}'.format(colonne, ligne))
+            # print('pion J2 - colonne {} - ligne {}'.format(colonne, ligne))
             jeton = jeton_j2
             bord_size_x = screen_size_x / 40
             bord_size_y = screen_size_y / 40
@@ -132,7 +138,7 @@ class MorpionJeu:
 
         pos_jeton_x = (bord_size_x + (colonne - 1) * colonne_size)
         pos_jeton_y = (bord_size_y + (ligne - 1) * line_size)
-        screen.blit(jeton, (pos_jeton_x, pos_jeton_y))
+        self.screen.blit(jeton, (pos_jeton_x, pos_jeton_y))
 
 
     def test_suite(self, px, py, joueur):
@@ -178,7 +184,7 @@ class MorpionJeu:
         global font, text
 
         font = pygame.font.SysFont(None, text_gagnant)
-        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        pygame.draw.rect(self.screen, score_color, (0, screen_size_y, screen_size_x, score_size))
 
         if joueur == 1:
             text = font.render('Gagnant : {}'.format(Nom_J1), True, black)
@@ -187,18 +193,18 @@ class MorpionJeu:
         elif joueur == 0:
             text = font.render('Pas de gagnant', True, black)
 
-        screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y / 2)))
+        self.screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y / 2)))
 
-        pygame.draw.rect(screen, pink_fade, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl))
-        pygame.draw.rect(screen, pink, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl), 5)
+        pygame.draw.rect(self.screen, pink_fade, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl))
+        pygame.draw.rect(self.screen, pink, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl), 5)
         title = font.render('REJOUER', True, pink)
-        screen.blit(title, title.get_rect(
+        self.screen.blit(title, title.get_rect(
             center=(buton_rejouer_xi + buton_rejouer_xl / 2, buton_rejouer_yi + buton_rejouer_yl / 2)))
 
-        pygame.draw.rect(screen, pink_fade, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl))
-        pygame.draw.rect(screen, pink, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl), 5)
+        pygame.draw.rect(self.screen, pink_fade, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl))
+        pygame.draw.rect(self.screen, pink, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl), 5)
         title = font.render('MENU', True, pink)
-        screen.blit(title, title.get_rect(center=(buton_menu_xi + buton_menu_xl / 2, buton_menu_yi + buton_menu_yl / 2)))
+        self.screen.blit(title, title.get_rect(center=(buton_menu_xi + buton_menu_xl / 2, buton_menu_yi + buton_menu_yl / 2)))
 
         pygame.display.flip()
         self.fin_partie()
@@ -206,12 +212,12 @@ class MorpionJeu:
 
     def fin_partie(self):
         # loop
-        while 1:
+        while self.running:
 
             # Did the user click the window close button?
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    self.running = 0
 
             if pygame.mouse.get_pressed() == (1, 0, 0):
                 pos_x = pygame.mouse.get_pos()[0]
@@ -224,7 +230,4 @@ class MorpionJeu:
                         pos_y < (buton_menu_yi + buton_menu_yl)):
                     pygame.time.delay(100)
                     # menu general
-
-# a retirer
-jeu = MorpionJeu()
-jeu.main()
+                    self.running = 0

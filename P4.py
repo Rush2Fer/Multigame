@@ -5,7 +5,7 @@ pygame.init()
 screen_size_x = 600
 screen_size_y = screen_size_x * (1498 / 1730)
 score_size = 100
-screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
+
 
 bord_size_x = screen_size_x / 40
 colonne_size = (screen_size_x - (0.91 * bord_size_x)) / 7
@@ -53,17 +53,22 @@ score_color = blue
 
 
 class P4Jeu:
+    
+    def __init__(self):
+        self.screen = pygame.display.set_mode([screen_size_x, screen_size_y + score_size])
+        self.running = 1
 
     def main(self):
         self.init_screen()
-
+        pygame.event.clear()
+        
         # loop
-        while 1:
+        while self.running:
 
             # Did the user click the window close button?
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    self.running = 0
 
             global i, cpt
             self.affiche_joueur(i)
@@ -92,10 +97,10 @@ class P4Jeu:
               [0, 0, 0, 0, 0, 0, 0]]
 
         # Fill the background
-        screen.fill(black)
+        self.screen.fill(black)
         font = pygame.font.SysFont(None, text_size)
-        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
-        screen.blit(p4_grille, (0, 0))
+        pygame.draw.rect(self.screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        self.screen.blit(p4_grille, (0, 0))
         pygame.display.flip()
 
 
@@ -112,12 +117,12 @@ class P4Jeu:
 
     def affiche_joueur(self, joueur):
         global text
-        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        pygame.draw.rect(self.screen, score_color, (0, screen_size_y, screen_size_x, score_size))
         if joueur == 1:
             text = font.render('Tour de : {}'.format(Nom_J1), True, white)
         elif joueur == -1:
             text = font.render('Tour de : {}'.format(Nom_J2), True, white)
-        screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y + (score_size / 2))))
+        self.screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y + (score_size / 2))))
 
 
     def placer_pion(self, joueur, colonne):
@@ -139,7 +144,7 @@ class P4Jeu:
 
         pos_jeton_y = (bord_size_y + z * line_size)
         pos_jeton_x = bord_size_x + (colonne - 1) * colonne_size
-        screen.blit(jeton, (pos_jeton_x, pos_jeton_y))
+        self.screen.blit(jeton, (pos_jeton_x, pos_jeton_y))
 
 
     def test_suite(self, px, py, joueur):
@@ -209,7 +214,7 @@ class P4Jeu:
         global font, text
 
         font = pygame.font.SysFont(None, text_gagnant)
-        pygame.draw.rect(screen, score_color, (0, screen_size_y, screen_size_x, score_size))
+        pygame.draw.rect(self.screen, score_color, (0, screen_size_y, screen_size_x, score_size))
 
         if joueur == 1:
             text = font.render('Gagnant : {}'.format(Nom_J1), True, white)
@@ -218,17 +223,17 @@ class P4Jeu:
         elif joueur == 0:
             text = font.render('Pas de gagnant', True, white)
 
-        screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y / 2)))
+        self.screen.blit(text, text.get_rect(center=(screen_size_x / 2, screen_size_y / 2)))
 
-        pygame.draw.rect(screen, pink_fade, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl))
-        pygame.draw.rect(screen, pink, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl), 5)
+        pygame.draw.rect(self.screen, pink_fade, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl))
+        pygame.draw.rect(self.screen, pink, (buton_rejouer_xi, buton_rejouer_yi, buton_rejouer_xl, buton_rejouer_yl), 5)
         title = font.render('REJOUER', True, pink)
-        screen.blit(title, title.get_rect(center=(buton_rejouer_xi + buton_rejouer_xl / 2, buton_rejouer_yi + buton_rejouer_yl / 2)))
+        self.screen.blit(title, title.get_rect(center=(buton_rejouer_xi + buton_rejouer_xl / 2, buton_rejouer_yi + buton_rejouer_yl / 2)))
 
-        pygame.draw.rect(screen, pink_fade, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl))
-        pygame.draw.rect(screen, pink, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl), 5)
+        pygame.draw.rect(self.screen, pink_fade, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl))
+        pygame.draw.rect(self.screen, pink, (buton_menu_xi, buton_menu_yi, buton_menu_xl, buton_menu_yl), 5)
         title = font.render('MENU', True, pink)
-        screen.blit(title, title.get_rect(center=(buton_menu_xi + buton_menu_xl / 2, buton_menu_yi + buton_menu_yl / 2)))
+        self.screen.blit(title, title.get_rect(center=(buton_menu_xi + buton_menu_xl / 2, buton_menu_yi + buton_menu_yl / 2)))
 
         pygame.display.flip()
         self.fin_partie()
@@ -237,12 +242,12 @@ class P4Jeu:
     def fin_partie(self):
 
         # loop
-        while 1:
+        while self.running:
 
             # Did the user click the window close button?
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pygame.quit()
+                    self.running = 0
 
             if pygame.mouse.get_pressed() == (1, 0, 0):
                 pos_x = pygame.mouse.get_pos()[0]
@@ -253,7 +258,4 @@ class P4Jeu:
                 elif (pos_x > buton_menu_xi) and (pos_x < (buton_menu_xi + buton_menu_xl)) and (pos_y > buton_menu_yi) and (pos_y < (buton_menu_yi + buton_menu_yl)):
                     pygame.time.delay(100)
                     # menu general
-
-# a retirer
-jeu = P4Jeu()
-jeu.main()
+                    self.running = 0
