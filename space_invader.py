@@ -186,9 +186,33 @@ class Game:
 
     def victory_message(self):
         if not self.aliens.sprites():
-          victory_surf = self.font.render('You won', False, 'white')
-          victory_rect = victory_surf.get_rect(center = (self.screen_width/2, self.screen_height/2))
-          self.screen.blit(victory_surf, victory_rect)
+            victory_surf = self.font.render('You won', False, 'white')
+            victory_rect = victory_surf.get_rect(center = (self.screen_width/2, self.screen_height/2))
+            self.screen.blit(victory_surf, victory_rect)
+
+            while self.running:
+                mouse = pygame.mouse.get_pos()
+                for ev in pygame.event.get():
+                    if ev.type == pygame.QUIT:
+                        self.running=False
+                        break
+                    if ev.type == pygame.MOUSEBUTTONDOWN:
+                        if self.screen_width / 2-80 <= mouse[0] <= self.screen_width / 2+60  and self.screen_height / 2+30 <= mouse[1] <= self.screen_height / 2+85 :
+                            self.running=False
+                            break
+
+                if self.screen_width / 2-80 <= mouse[0] <= self.screen_width / 2+60  and self.screen_height / 2 +30<= mouse[1] <= self.screen_height / 2+85 :
+                    pygame.draw.rect(self.screen, self.color_light, [self.screen_width / 2-80, self.screen_height / 2+50, 140, 40])
+
+                else:
+                    pygame.draw.rect(self.screen, self.color_dark, [self.screen_width / 2-80, self.screen_height / 2+50, 140, 40])
+
+                self.screen.blit(self.text, (self.screen_width / 2 -45, self.screen_height / 2+37))
+
+
+                pygame.display.update()
+
+
 
     def death_message(self):
         if self.lives<=0:
@@ -196,14 +220,16 @@ class Game:
             death_rect = death_surf.get_rect(center = (self.screen_width/2, self.screen_height/2))
             self.screen.blit(death_surf, death_rect)
 
-            while True:
+            while self.running:
                 mouse = pygame.mouse.get_pos()
                 for ev in pygame.event.get():
                     if ev.type == pygame.QUIT:
-                        pygame.quit()
+                        self.running=False
+                        break
                     if ev.type == pygame.MOUSEBUTTONDOWN:
                         if self.screen_width / 2-80 <= mouse[0] <= self.screen_width / 2+60  and self.screen_height / 2+30 <= mouse[1] <= self.screen_height / 2+85 :
-                            pygame.quit()
+                            self.running=False
+                            break
 
                 if self.screen_width / 2-80 <= mouse[0] <= self.screen_width / 2+60  and self.screen_height / 2 +30<= mouse[1] <= self.screen_height / 2+85 :
                     pygame.draw.rect(self.screen, self.color_light, [self.screen_width / 2-80, self.screen_height / 2+50, 140, 40])
